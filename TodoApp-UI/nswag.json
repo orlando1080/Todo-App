@@ -1,0 +1,28 @@
+{
+  "runtime": "Default",
+  "documentGenerator": {
+    "aspNetCoreToOpenApi": {
+      "project": "../TodoApp.Api/TodoApp.Api.csproj",
+      "msBuildProjectExtensions": "bin/Debug/net10.0",
+      "output": "openapi.json",
+      "outputType": "OpenApi3"
+    }
+  },
+  "codeGenerators": {
+    "openApiToTypeScriptClient": {
+      "className": "{controller}Client",
+      "moduleName": "",
+      "namespace": "",
+      "template": "Angular",
+      "injectionTokenType": "InjectionToken",
+      "output": "src/app/api/api-client.generated.ts",
+      "strictNullChecks": true,
+      "nullValue": "Undefined",
+      "generateOptionalParameters": true,
+      "wrapResponses": false,
+      "generateResponseClasses": false,
+      "typeStyle": "Interface",
+      "generateClientInterfaces": true
+    }
+  }
+}
