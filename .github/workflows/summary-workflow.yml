@@ -21,7 +21,7 @@ jobs:
             -d "{
               \"contents\": [{
                 \"parts\": [{
-                  \"text\": \"Summarise this repository in plain English.\n\nREADME:\n${README}\n\nFOLDER STRUCTURE:\n${STRUCTURE}\"
+                  \"text\": \"Review this repo and suggest improvements to the structure or documentation.\n\nREADME:\n${README}\n\nFOLDER STRUCTURE:\n${STRUCTURE}\"
                 }]
               }]
             }")
