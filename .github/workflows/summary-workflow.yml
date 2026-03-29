@@ -1,34 +1,21 @@
-name: Repo Summary
+- name: Call Gemini API
+  run: |
+    RESPONSE=$(curl -s \
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
+      -H "Content-Type: application/json" \
+      -d "{
+        \"contents\": [{
+          \"parts\": [{
+            \"text\": \"Summarise this repository in plain English.\n\nREADME:\n$(cat README.md)\n\nFOLDER STRUCTURE:\n$(find . -not -path './.git/*' -type d | sort)\"
+          }]
+        }]
+      }")
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch: # lets you trigger it manually from the Actions tab
+    SUMMARY=$(echo $RESPONSE | python3 -c "
+    import sys, json
+    data = json.load(sys.stdin)
+    print(data['candidates'][0]['content']['parts'][0]['text'])
+    ")
 
-jobs:
-  summarise:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Generate repo summary
-        run: |
-          echo "## 📁 Repo Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          echo "### File Count" >> $GITHUB_STEP_SUMMARY
-          echo "Total files: $(find . -not -path './.git/*' -type f | wc -l)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          echo "### Folder Structure" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          find . -not -path './.git/*' -type d | sort >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          echo "### Recent Commits" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          git log --oneline -5 >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+    echo "## 🤖 AI Repo Summary" >> $GITHUB_STEP_SUMMARY
+    echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
