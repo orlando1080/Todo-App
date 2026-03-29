@@ -2,7 +2,7 @@ name: Generate Repository Summary
 
 on:
   push:
-    branch:
+    branches:
         -main
 
 jobs:
