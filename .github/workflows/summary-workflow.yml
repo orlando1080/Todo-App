@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: generate-summary
+          ref: main
       
       - name: Generate summary with GitHub Models
         id: generate
