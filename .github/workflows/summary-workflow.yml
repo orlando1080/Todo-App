@@ -1,7 +1,9 @@
 name: Generate Repository Summary
 
 on:
-  workflow_dispatch:
+  push:
+    branch:
+        -main
 
 jobs:
   generate-summary:
