@@ -1,26 +1,34 @@
-name: Generate Summary
+name: Repo Summary
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch: # lets you trigger it manually from the Actions tab
 
 jobs:
-  generate-summary:
+  summarise:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Generate summary
+      - name: Generate repo summary
         run: |
-          curl -X POST https://api.github.com/models/generate-summary \
-            -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' \
-            -H 'Accept: application/vnd.github.v3+json' -d '{ "content": "$(cat README.md)" }' \ 
-            -o summary.txt
+          echo "## 📁 Repo Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
-      - name: Upload summary
-        uses: actions/upload-artifact@v2
-        with:
-          name: summary
-          path: summary.txt
+          echo "### File Count" >> $GITHUB_STEP_SUMMARY
+          echo "Total files: $(find . -not -path './.git/*' -type f | wc -l)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### Folder Structure" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          find . -not -path './.git/*' -type d | sort >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### Recent Commits" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          git log --oneline -5 >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
