@@ -1,50 +1,26 @@
-name: Generate Repository Summary
+name: Generate Summary
 
 on:
   push:
     branches:
-        -main
+      - main
 
 jobs:
   generate-summary:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Generate summary
+        run: |
+          curl -X POST https://api.github.com/models/generate-summary \
+            -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' \
+            -H 'Accept: application/vnd.github.v3+json' -d '{ "content": "$(cat README.md)" }' \ 
+            -o summary.txt
+
+      - name: Upload summary
+        uses: actions/upload-artifact@v2
         with:
-          ref: main
-      
-      - name: Generate summary with GitHub Models
-        id: generate
-        run: |
-          SUMMARY=$(gh models run gpt-4o-mini -i "Analyze this C# Todo-App repository and provide: 1. Project Purpose 2. Technology Stack 3. Repository Status 4. Key Features 5. Current Activity. Format as markdown.")
-          echo "SUMMARY<<EOF" >> $GITHUB_OUTPUT
-          echo "$SUMMARY" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Create REPOSITORY_SUMMARY.md
-        run: |
-          cat > REPOSITORY_SUMMARY.md << 'EOF'
-          # Repository Summary
-          
-          Generated on: $(date)
-          
-          ## Analysis
-          
-          ${{ steps.generate.outputs.SUMMARY }}
-          EOF
-      
-      - name: Commit and push summary
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add REPOSITORY_SUMMARY.md
-          git commit -m "docs: Update repository summary" || echo "No changes to commit"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: summary
+          path: summary.txt
