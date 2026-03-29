@@ -10,46 +10,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build prompt
-        id: build_prompt
+      - name: Call Gemini API
         run: |
-          README=$(cat README.md)
-          STRUCTURE=$(find . -not -path './.git/*' -type d | sort)
-
-          # Write the prompt to a file to avoid shell escaping nightmares
-          cat > prompt.json << EOF
-          {
-            "model": "claude-opus-4-5",
-            "max_tokens": 1024,
-            "messages": [
-              {
-                "role": "user",
-                "content": "Summarise this repository in plain English.\n\nREADME:\n${README}\n\nFOLDER STRUCTURE:\n${STRUCTURE}"
-              }
-            ]
-          }
-          EOF
-
-        - name: Call Gemini API
-          run: |
-            RESPONSE=$(curl -s \
-              "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
-              -H "Content-Type: application/json" \
-              -d "{
-                \"contents\": [{
-                  \"parts\": [{
-                    \"text\": \"Summarise this repository in plain English.\n\nREADME:\n$(cat README.md)\n\nFOLDER STRUCTURE:\n$(find . -not -path './.git/*' -type d | sort)\"
-                  }]
+          RESPONSE=$(curl -s \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"contents\": [{
+                \"parts\": [{
+                  \"text\": \"Summarise this repository in plain English.\n\nREADME:\n$(cat README.md)\n\nFOLDER STRUCTURE:\n$(find . -not -path './.git/*' -type d | sort)\"
                 }]
-              }")
+              }]
+            }")
 
-            SUMMARY=$(echo $RESPONSE | python3 -c "
-            import sys, json
-            data = json.load(sys.stdin)
-            print(data['candidates'][0]['content']['parts'][0]['text'])
-            ")
+          SUMMARY=$(echo $RESPONSE | python3 -c "
+          import sys, json
+          data = json.load(sys.stdin)
+          print(data['candidates'][0]['content']['parts'][0]['text'])
+          ")
 
-            echo "## 🤖 AI Repo Summary" >> $GITHUB_STEP_SUMMARY
-            echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
-       
-
+          echo "## 🤖 AI Repo Summary" >> $GITHUB_STEP_SUMMARY
+          echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
