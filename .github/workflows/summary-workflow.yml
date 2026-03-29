@@ -12,16 +12,21 @@ jobs:
 
       - name: Call Gemini API
         run: |
+          README=$([ -f README.md ] && cat README.md || echo "No README found")
+          STRUCTURE=$(find . -not -path './.git/*' -type d | sort)
+
           RESPONSE=$(curl -s \
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d "{
               \"contents\": [{
                 \"parts\": [{
-                  \"text\": \"Summarise this repository in plain English.\n\nREADME:\n$(cat README.md)\n\nFOLDER STRUCTURE:\n$(find . -not -path './.git/*' -type d | sort)\"
+                  \"text\": \"Summarise this repository in plain English.\n\nREADME:\n${README}\n\nFOLDER STRUCTURE:\n${STRUCTURE}\"
                 }]
               }]
             }")
+
+          echo "Raw response: $RESPONSE"
 
           SUMMARY=$(echo $RESPONSE | python3 -c "
           import sys, json
@@ -29,5 +34,14 @@ jobs:
           print(data['candidates'][0]['content']['parts'][0]['text'])
           ")
 
-          echo "## 🤖 AI Repo Summary" >> $GITHUB_STEP_SUMMARY
-          echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
+          echo "$SUMMARY" > SUMMARY.md
+
+      - name: Commit and push summary
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add SUMMARY.md
+          git diff --cached --quiet || git commit -m "docs: update repo summary [skip ci]"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
