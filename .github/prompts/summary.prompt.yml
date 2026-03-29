@@ -1,0 +1,24 @@
+name: Repository Summary
+description: Generate a concise summary of the Todo-App repository
+model: gpt-4o-mini
+temperature: 0.7
+messages:
+  - role: user
+    content: |
+      Analyze this GitHub repository information and create a brief, professional summary:
+      
+      Repository: orlando1080/Todo-App
+      Language: C#
+      Created: 7 days ago
+      Last Updated: 1 hour ago
+      Last Pushed: 2026-03-29 at 17:50:50 UTC
+      Size: 133 KB
+      Visibility: Public
+      Stars: 0
+      Open Issues: 0
+      
+      Generate a 3-4 sentence summary that includes:
+      1. What the project is
+      2. Technology stack
+      3. Current status
+      4. Next steps or potential improvements
