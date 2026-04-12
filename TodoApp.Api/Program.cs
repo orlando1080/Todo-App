@@ -2,12 +2,10 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using TodoApp.Application.Services;
 using TodoApp.Application.TodoTasks.Commands;
-using TodoApp.Application.TodoTasks.Interfaces;
-using TodoApp.Domain.Interfaces;
 using TodoApp.Infrastructure;
 using TodoApp.Infrastructure.Data;
 using TodoApp.Infrastructure.Persistence;
-using TodoApp.Infrastructure.Queues;
+
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +17,10 @@ builder.Services.AddOpenApiDocument(config =>
     config.PostProcess = document =>
     {
         document.Servers.Clear();
-        document.Servers.Add(new NSwag.OpenApiServer { Url = "http://localhost:5289" });
+        document.Servers.Add(new NSwag.OpenApiServer
+        {
+            Url = "http://localhost:5289"
+        });
     };
 });
 
@@ -30,21 +31,19 @@ builder.Services.AddControllers();
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<TodoDbContext>(options => options.UseSqlServer(connectionString));
-builder.Services.AddScoped<IMessageBus, MassTransitMessageBus>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<CreateTaskCommandHandler>();
+
+
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<TaskCreatedConsumer>();
 
-    x.UsingInMemory((ctx, cfg) =>
-    {
-        cfg.ConfigureEndpoints(ctx);
-    });
+    x.UsingInMemory((ctx, cfg) => { cfg.ConfigureEndpoints(ctx); });
 });
 
-builder.Services.AddCors(options => {
-    options.AddDefaultPolicy(policy => {
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
         policy.WithOrigins("http://localhost:4200")
             .AllowAnyHeader()
             .AllowAnyMethod();
@@ -52,13 +51,26 @@ builder.Services.AddCors(options => {
 });
 
 // 3. Scrutor Auto Registration
+// Group 1: Standard Abstractions (Interface -> Implementation)
+// We want these hidden behind their interfaces.
 builder.Services.Scan(scan => scan
-    .FromAssembliesOf(typeof(ITodoRepository), typeof(TodoRepository), typeof(ITodoApplicationService)) // Look at the assemblies these belong too
+    .FromAssembliesOf(typeof(TodoApplicationService), typeof(TodoRepository))
     .AddClasses(classes => classes.Where(c =>
         c.Name.EndsWith("Repository", StringComparison.Ordinal)
-        || c.Name.EndsWith("ApplicationService", StringComparison.Ordinal))) // Filter the class by what it ends with
-    .AsImplementedInterfaces() // Maps IToDoRepository -> ToDoRepository automatically
-    .WithScopedLifetime()); // Sets the "Waitstaff" lifetime (new instance per request)
+        || c.Name.EndsWith("Service", StringComparison.Ordinal)
+        || c.Name.EndsWith("Processor", StringComparison.Ordinal)
+        || c.Name.EndsWith("UnitOfWork", StringComparison.Ordinal)
+        || c.Name.EndsWith("MessageBus", StringComparison.Ordinal)))
+    .AsImplementedInterfaces()
+    .WithScopedLifetime());
+
+// Group 2: Concrete Workers (Self-Registration)
+// CommandHandlers usually don't need interfaces; we resolve the class directly.
+builder.Services.Scan(scan => scan
+    .FromAssembliesOf(typeof(CreateTaskCommandHandler))
+    .AddClasses(classes => classes.Where(c => c.Name.EndsWith("CommandHandler", StringComparison.Ordinal)))
+    .AsSelf()
+    .WithScopedLifetime());
 
 WebApplication app = builder.Build();
 
