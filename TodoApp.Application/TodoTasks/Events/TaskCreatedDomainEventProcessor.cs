@@ -3,7 +3,7 @@ using TodoApp.Domain.Events;
 
 namespace TodoApp.Application.TodoTasks.Events;
 
-public class TaskCreatedDomainEventProcessor : ITaskCreatedDomainEventProcessor
+public sealed class TaskCreatedDomainEventProcessor : ITaskCreatedDomainEventProcessor
 {
     private readonly INotificationService _notificationService;
 

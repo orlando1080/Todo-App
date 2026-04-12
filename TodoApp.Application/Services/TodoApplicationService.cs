@@ -6,7 +6,7 @@ using TodoApp.Domain.Interfaces;
 
 namespace TodoApp.Application.Services;
 
-public class TodoApplicationService : ITodoApplicationService
+public sealed class TodoApplicationService : ITodoApplicationService
 {
     private readonly ITodoRepository _todoRepository;
     private readonly ILogger<TodoApplicationService> _logger;

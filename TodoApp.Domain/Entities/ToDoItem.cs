@@ -2,7 +2,7 @@
 
 namespace TodoApp.Domain.Entities;
 
-public class TodoItem : BaseEntity
+public sealed class TodoItem : BaseEntity
 {
     public TodoItem(string title)
     {

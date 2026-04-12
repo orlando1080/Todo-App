@@ -2,7 +2,7 @@
 
 namespace TodoApp.Application.Adtos;
 
-public record TodoItemDto(
+public sealed record TodoItemDto(
     [property: Required] Guid Id,
     string Title,
     bool IsCompleted);

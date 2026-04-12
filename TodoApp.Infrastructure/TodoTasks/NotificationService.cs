@@ -2,7 +2,7 @@
 
 namespace TodoApp.Infrastructure.TodoTasks;
 
-public class NotificationService : INotificationService
+public sealed class NotificationService : INotificationService
 {
     public Task SendAsync(string message)
     {

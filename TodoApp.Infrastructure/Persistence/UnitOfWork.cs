@@ -3,7 +3,7 @@ using TodoApp.Infrastructure.Data;
 
 namespace TodoApp.Infrastructure.Persistence;
 
-public class UnitOfWork : IUnitOfWork
+public sealed class UnitOfWork : IUnitOfWork
 {
     private readonly TodoDbContext _context;
 

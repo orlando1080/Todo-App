@@ -1,6 +1,6 @@
 ﻿namespace TodoApp.Application.TodoTasks.Commands;
 
-public record ReceivedMessage(
+public sealed record ReceivedMessage(
     string MessageId,
     string PopReceipt,
     string MessageBody

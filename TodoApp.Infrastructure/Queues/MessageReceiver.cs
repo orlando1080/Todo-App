@@ -3,7 +3,7 @@ using TodoApp.Application.TodoTasks.Interfaces;
 
 namespace TodoApp.Infrastructure.Queues;
 
-public class MessageReceiver : IMessageReceiver
+public sealed class MessageReceiver : IMessageReceiver
 {
     public Task<string?> ReceiveAsync(CancellationToken cancellationToken)
     {

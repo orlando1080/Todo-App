@@ -6,7 +6,7 @@ using TodoApp.Application.TodoTasks.Commands;
 namespace TodoApp.Api.Controllers;
 
 [ApiController, Route("api/[Controller]")] // This makes the URL: api/todo
-public class TodoController : ControllerBase
+public sealed class TodoController : ControllerBase
 {
     private readonly ITodoApplicationService _todoApplicationService;
     private readonly CreateTaskCommandHandler _createTaskCommandHandler;

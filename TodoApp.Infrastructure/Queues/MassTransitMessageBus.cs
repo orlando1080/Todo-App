@@ -3,7 +3,7 @@ using TodoApp.Application.TodoTasks.Interfaces;
 
 namespace TodoApp.Infrastructure.Queues;
 
-public class MassTransitMessageBus : IMessageBus
+public sealed class MassTransitMessageBus : IMessageBus
 {
     private readonly IPublishEndpoint _publishEndpoint;
 

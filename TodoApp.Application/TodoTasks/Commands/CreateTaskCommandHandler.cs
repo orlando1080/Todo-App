@@ -7,7 +7,7 @@ using TodoApp.Domain.Interfaces;
 
 namespace TodoApp.Application.TodoTasks.Commands;
 
-public class CreateTaskCommandHandler
+public sealed class CreateTaskCommandHandler
 {
     private readonly ITodoRepository _todoRepository;
     private readonly IMessageBus _messageBus;

@@ -1,6 +1,6 @@
 namespace TodoApp.Application.Adtos;
 
-public record TodoResponseDto(
+public sealed record TodoResponseDto(
     Guid Id,
     string Title,
     bool IsCompleted);

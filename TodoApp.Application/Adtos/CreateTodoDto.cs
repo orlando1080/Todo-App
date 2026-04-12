@@ -1,3 +1,3 @@
 namespace TodoApp.Application.Adtos;
 
-public record CreateTodoDto(string Title);
+public sealed record CreateTodoDto(string Title);

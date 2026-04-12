@@ -5,7 +5,7 @@ using TodoApp.Infrastructure.Data;
 
 namespace TodoApp.Infrastructure.Persistence;
 
-public class TodoRepository : ITodoRepository
+public sealed class TodoRepository : ITodoRepository
 {
     private readonly TodoDbContext _context;
 
