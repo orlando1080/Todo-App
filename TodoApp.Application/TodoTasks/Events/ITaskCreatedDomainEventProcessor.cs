@@ -2,7 +2,7 @@
 
 namespace TodoApp.Application.TodoTasks.Events;
 
-public interface ITodoTaskCreatedEventHandler
+public interface ITaskCreatedDomainEventProcessor
 {
     Task HandleAsync(TaskCreatedDomainEvent domainEvent);
 

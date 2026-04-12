@@ -11,17 +11,17 @@ public class TaskCreatedWorker : BackgroundService
 
     private readonly ILogger _logger;
 
-    private readonly ITodoTaskCreatedEventHandler _todoTaskCreatedEventHandler;
+    private readonly ITaskCreatedDomainEventProcessor _taskCreatedDomainEventProcessor;
 
 
     public TaskCreatedWorker(
         IMessageBus queueClient,
         ILogger logger,
-        ITodoTaskCreatedEventHandler todoTaskCreatedEventHandler)
+        ITaskCreatedDomainEventProcessor taskCreatedDomainEventProcessor)
     {
         _queueClient = queueClient;
         _logger = logger;
-        _todoTaskCreatedEventHandler = todoTaskCreatedEventHandler;
+        _taskCreatedDomainEventProcessor = taskCreatedDomainEventProcessor;
     }
 
 

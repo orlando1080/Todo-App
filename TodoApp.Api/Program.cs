@@ -1,8 +1,10 @@
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using TodoApp.Application.Services;
 using TodoApp.Application.TodoTasks.Commands;
 using TodoApp.Application.TodoTasks.Interfaces;
 using TodoApp.Domain.Interfaces;
+using TodoApp.Infrastructure;
 using TodoApp.Infrastructure.Data;
 using TodoApp.Infrastructure.Persistence;
 using TodoApp.Infrastructure.Queues;
@@ -26,12 +28,20 @@ builder.Services.AddControllers();
 
 // 2. Register the Database (Ledger)
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-string? azureConnectionString = builder.Configuration.GetConnectionString("Azurite");
 
 builder.Services.AddDbContext<TodoDbContext>(options => options.UseSqlServer(connectionString));
-builder.Services.AddScoped<IMessageBus>(sp => new AzureQueueMessageBus(azureConnectionString));
+builder.Services.AddScoped<IMessageBus, MassTransitMessageBus>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<CreateTodoTaskCommandHandler>();
+builder.Services.AddScoped<CreateTaskCommandHandler>();
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<TaskCreatedConsumer>();
+
+    x.UsingInMemory((ctx, cfg) =>
+    {
+        cfg.ConfigureEndpoints(ctx);
+    });
+});
 
 builder.Services.AddCors(options => {
     options.AddDefaultPolicy(policy => {

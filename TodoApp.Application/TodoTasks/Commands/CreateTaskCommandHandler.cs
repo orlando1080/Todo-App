@@ -1,17 +1,19 @@
-﻿using TodoApp.Application.TodoTasks.Interfaces;
+﻿using Mapster;
+using TodoApp.Application.Adtos;
+using TodoApp.Application.TodoTasks.Interfaces;
 using TodoApp.Domain.Entities;
 using TodoApp.Domain.Events;
 using TodoApp.Domain.Interfaces;
 
 namespace TodoApp.Application.TodoTasks.Commands;
 
-public class CreateTodoTaskCommandHandler
+public class CreateTaskCommandHandler
 {
     private readonly ITodoRepository _todoRepository;
     private readonly IMessageBus _messageBus;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateTodoTaskCommandHandler(
+    public CreateTaskCommandHandler(
         ITodoRepository todoRepository,
         IMessageBus messageBus,
         IUnitOfWork unitOfWork)
@@ -21,11 +23,11 @@ public class CreateTodoTaskCommandHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task HandleAsync(AddTaskCommand addTaskCommand, CancellationToken cancellationToken)
+    public async Task<TodoItemDto> HandleAsync(CreateTaskCommand createTaskCommand, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(addTaskCommand);
+        ArgumentNullException.ThrowIfNull(createTaskCommand);
 
-        TodoItem todoItem = TodoItem.Create(addTaskCommand.Title);
+        TodoItem todoItem = TodoItem.Create(createTaskCommand.Title);
 
         await _todoRepository.AddAsync(todoItem).ConfigureAwait(false);
         await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
@@ -37,5 +39,7 @@ public class CreateTodoTaskCommandHandler
                 await _messageBus.PublishAsync(created).ConfigureAwait(false);
             }
         }
+
+        return todoItem.Adapt<TodoItemDto>();
     }
 }

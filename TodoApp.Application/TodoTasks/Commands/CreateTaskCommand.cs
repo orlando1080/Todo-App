@@ -1,3 +1,3 @@
 ﻿namespace TodoApp.Application.TodoTasks.Commands;
 
-public record AddTaskCommand(string Title);
+public record CreateTaskCommand(string Title);

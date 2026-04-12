@@ -9,12 +9,12 @@ namespace TodoApp.Api.Controllers;
 public class TodoController : ControllerBase
 {
     private readonly ITodoApplicationService _todoApplicationService;
-    private readonly CreateTodoTaskCommandHandler _createTodoTaskCommandHandler;
+    private readonly CreateTaskCommandHandler _createTaskCommandHandler;
 
-    public TodoController(ITodoApplicationService todoApplicationService, CreateTodoTaskCommandHandler createTodoTaskCommandHandler)
+    public TodoController(ITodoApplicationService todoApplicationService, CreateTaskCommandHandler createTaskCommandHandler)
     {
         _todoApplicationService = todoApplicationService;
-        _createTodoTaskCommandHandler = createTodoTaskCommandHandler;
+        _createTaskCommandHandler = createTaskCommandHandler;
     }
 
     [HttpGet]
@@ -31,11 +31,9 @@ public class TodoController : ControllerBase
     {
         try
         {
-            TodoItemDto todoItemDto = await  _todoApplicationService.AddTaskAsync(new CreateTodoDto(title)).ConfigureAwait(false);
+            CreateTaskCommand command = new(title);
 
-            AddTaskCommand command = new(title);
-
-            await _createTodoTaskCommandHandler.HandleAsync(command, CancellationToken.None).ConfigureAwait(false);
+            TodoItemDto todoItemDto = await _createTaskCommandHandler.HandleAsync(command, CancellationToken.None).ConfigureAwait(false);
 
             return CreatedAtAction(nameof(Create), todoItemDto);
         }
