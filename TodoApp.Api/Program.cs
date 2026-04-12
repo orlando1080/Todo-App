@@ -2,9 +2,9 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using TodoApp.Application.Services;
 using TodoApp.Application.TodoTasks.Commands;
-using TodoApp.Infrastructure;
 using TodoApp.Infrastructure.Data;
 using TodoApp.Infrastructure.Persistence;
+using TodoApp.Infrastructure.Queues;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

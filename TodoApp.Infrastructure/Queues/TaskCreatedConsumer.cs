@@ -2,7 +2,7 @@
 using TodoApp.Application.TodoTasks.Events;
 using TodoApp.Domain.Events;
 
-namespace TodoApp.Infrastructure;
+namespace TodoApp.Infrastructure.Queues;
 
 public sealed class TaskCreatedConsumer : IConsumer<TaskCreatedDomainEvent>
 {
