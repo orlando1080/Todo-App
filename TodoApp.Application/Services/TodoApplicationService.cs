@@ -26,29 +26,6 @@ public sealed class TodoApplicationService : ITodoApplicationService
         return todoItems.Adapt<TodoItemDto[]>(); // Mapster way
     }
 
-    public async Task<TodoItemDto> AddTaskAsync(CreateTodoDto createTodoDto)
-    {
-        ArgumentNullException.ThrowIfNull(createTodoDto);
-
-        _logger.LogInformation("Creating task {Title}",  createTodoDto.Title);
-
-
-        TodoItem todoItem = new(createTodoDto.Title);
-
-        try
-        {
-            await _todoRepository.AddAsync(todoItem).ConfigureAwait(false);
-            _logger.LogInformation("Successfully created task {Title}", todoItem.Title);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Failed to create task {Title}", todoItem.Title);
-            throw;
-        }
-
-        return todoItem.Adapt<TodoItemDto>();
-    }
-
     public Task<TodoItemDto> GetByIdAsync(Guid id)
     {
         throw new NotImplementedException();

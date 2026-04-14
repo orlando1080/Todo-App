@@ -8,26 +8,27 @@ using TodoApp.Domain.Interfaces;
 namespace TodoApp.Application.Tests;
 
 [TestFixture]
-internal class TodoApplicationServiceTests
+[TestOf(typeof(TodoApplicationService))]
+internal sealed class TodoApplicationServiceTests
 {
-    private Mock<ITodoRepository> _todoRepositoryMock;
+    private readonly Mock<ITodoRepository> _todoRepositoryMock = new();
 
-    private Mock<ILogger<TodoApplicationService>> _loggerMock;
+    private readonly Mock<ILogger<TodoApplicationService>> _loggerMock = new();
 
-    private TodoApplicationService _sut;
+    private TodoApplicationService _sut = null!;
 
     [SetUp]
     public void Setup()
     {
-        _todoRepositoryMock = new Mock<ITodoRepository>();
-        _loggerMock = new Mock<ILogger<TodoApplicationService>>();
-
-        _loggerMock.Setup(x => x.IsEnabled(It.IsAny<LogLevel>())).Returns(true);
-        _loggerMock.Setup(x => x.BeginScope(It.IsAny<object>())).Returns(Mock.Of<IDisposable>());
-
         _sut = new TodoApplicationService(
             _todoRepositoryMock.Object,
             _loggerMock.Object);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _todoRepositoryMock.VerifyNoOtherCalls();
     }
 
     [Test]
@@ -47,37 +48,5 @@ internal class TodoApplicationServiceTests
             Assert.That(results, Has.Length.EqualTo(2));
             Assert.That(results[0].Id, Is.EqualTo(todoItem.Id));
         }
-    }
-
-    [Test]
-    public async Task AddTaskAsync_ReturnsTodoItemDto()
-    {
-        CreateTodoDto createTodoDto = new("test");
-        _todoRepositoryMock.Setup(x => x.AddAsync(It.IsAny<TodoItem>()));
-
-        TodoItemDto result = await _sut.AddTaskAsync(createTodoDto).ConfigureAwait(false);
-
-        using (Assert.EnterMultipleScope())
-        {
-            _todoRepositoryMock.Verify(x => x.AddAsync(It.IsAny<TodoItem>()), Times.Once);
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Title, Is.EqualTo(createTodoDto.Title));
-        }
-    }
-
-    [Test]
-    public void AddTaskAsync_ThrowsArgumentException_WhenTitleIsEmpty()
-    {
-        CreateTodoDto createTodoDto = new("");
-        Assert.ThrowsAsync<ArgumentException>(() => _sut.AddTaskAsync(createTodoDto));
-    }
-
-    [Test]
-    public void AddTaskAsync_ThrowsException_WhenDatabaseErrorOccurs()
-    {
-        CreateTodoDto createTodoDto = new("test");
-        _todoRepositoryMock.Setup(x => x.AddAsync(It.IsAny<TodoItem>())).ThrowsAsync(new Exception());
-
-        Assert.ThrowsAsync<Exception>(() => _sut.AddTaskAsync(createTodoDto));
     }
 }
