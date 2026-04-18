@@ -1,4 +1,4 @@
-namespace TodoApp.Application.Adtos;
+namespace TodoApp.Application.Dtos;
 
 public sealed record TodoResponseDto(
     Guid Id,

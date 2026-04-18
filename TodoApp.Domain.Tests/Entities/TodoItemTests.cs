@@ -11,7 +11,7 @@ namespace TodoApp.Domain.Tests.Entities;
 internal sealed class TodoItemTests
 {
     [Test]
-    public void Create_ValidTodoItem_returnsTodoItem()
+    public void Create_ValidTodoItem_ReturnsTodoItem()
     {
         TodoItem result = TodoItem.Create("test");
 
