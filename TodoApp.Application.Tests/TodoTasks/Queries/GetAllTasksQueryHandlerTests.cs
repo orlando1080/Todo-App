@@ -17,6 +17,8 @@ internal sealed class GetAllTasksQueryHandlerTests
     [SetUp]
     public void SetUp()
     {
+        _todoRepositoryMock.Reset();
+
         _sut = new GetAllTasksQueryHandler(_todoRepositoryMock.Object);
     }
 

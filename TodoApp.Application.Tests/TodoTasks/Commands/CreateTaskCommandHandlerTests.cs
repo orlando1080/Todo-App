@@ -23,6 +23,10 @@ internal sealed class CreateTaskCommandHandlerTests
     [SetUp]
     public void SetUp()
     {
+        _todoRepositoryMock.Reset();
+        _messageBusMock.Reset();
+        _unitOfWorkMock.Reset();
+
         _messageBusMock.Setup(x => x.PublishAsync(It.IsAny<TaskCreatedDomainEvent>()))
             .Returns(Task.CompletedTask);
 

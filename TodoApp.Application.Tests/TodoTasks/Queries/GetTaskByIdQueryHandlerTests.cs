@@ -1,0 +1,67 @@
+﻿using Moq;
+using TodoApp.Application.Dtos;
+using TodoApp.Application.TodoTasks.Queries;
+using TodoApp.Domain.Entities;
+using TodoApp.Domain.Interfaces;
+
+namespace TodoApp.Application.Tests.TodoTasks.Queries;
+
+[TestFixture]
+[TestOf(typeof(GetTaskByIdQueryHandler))]
+internal sealed class GetTaskByIdQueryHandlerTests
+{
+    private readonly Mock<ITodoRepository> _todoRepositoryMock = new();
+
+    private GetTaskByIdQueryHandler _sut = null!;
+
+
+    [SetUp]
+    public void SetUp()
+    {
+        _todoRepositoryMock.Reset();
+
+        _sut = new GetTaskByIdQueryHandler(_todoRepositoryMock.Object);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _todoRepositoryMock.VerifyNoOtherCalls();
+    }
+
+    [Test]
+    public async Task HandleAsync_ValidQuery_ReturnsTodoItemDto()
+    {
+        TodoItem todoItem = TodoItem.Create("test");
+        _todoRepositoryMock.Setup(x => x.GetByIdAsync(todoItem.Id)).ReturnsAsync(todoItem);
+
+        TodoItemDto? result = await _sut.HandleAsync(new GetTaskByIdQuery(todoItem.Id), CancellationToken.None).ConfigureAwait(false);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Title, Is.EqualTo(todoItem.Title));
+            Assert.That(result.Id, Is.EqualTo(todoItem.Id));
+            Assert.That(result.IsCompleted, Is.EqualTo(todoItem.IsCompleted));
+            _todoRepositoryMock.Verify(x => x.GetByIdAsync(todoItem.Id), Times.Once);
+        }
+    }
+
+    [Test]
+    public void HandleAsync_NullQuery_ThrowsArgumentNullException() =>
+        Assert.ThrowsAsync<ArgumentNullException>(() => _sut.HandleAsync(null!, CancellationToken.None));
+
+    [Test]
+    public async Task HandleAsync_TaskNotFound_ReturnsNull()
+    {
+        _todoRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((TodoItem?) null);
+
+        TodoItemDto? result = await _sut.HandleAsync(new GetTaskByIdQuery(Guid.NewGuid()), CancellationToken.None).ConfigureAwait(false);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.Null);
+            _todoRepositoryMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
+        }
+    }
+}

@@ -11,15 +11,18 @@ public sealed class TodoController : ControllerBase
     private readonly CreateTaskCommandHandler _createTaskCommandHandler;
     private readonly GetAllTasksQueryHandler _getAllTasksQueryHandler;
     private readonly DeleteTaskCommandHandler _deleteTaskCommandHandler;
+    private readonly GetTaskByIdQueryHandler _getTaskByIdQueryHandler;
 
     public TodoController(
         CreateTaskCommandHandler createTaskCommandHandler,
         GetAllTasksQueryHandler getAllTasksQueryHandler,
-        DeleteTaskCommandHandler deleteTaskCommandHandler)
+        DeleteTaskCommandHandler deleteTaskCommandHandler,
+        GetTaskByIdQueryHandler getTaskByIdQueryHandler)
     {
         _createTaskCommandHandler = createTaskCommandHandler;
         _getAllTasksQueryHandler = getAllTasksQueryHandler;
         _deleteTaskCommandHandler = deleteTaskCommandHandler;
+        _getTaskByIdQueryHandler = getTaskByIdQueryHandler;
     }
 
     [HttpGet]
@@ -28,6 +31,14 @@ public sealed class TodoController : ControllerBase
         TodoItemDto[] todoItemDtos = await _getAllTasksQueryHandler.HandleAsync(new GetAllTasksQuery(), CancellationToken.None).ConfigureAwait(false);
 
         return Ok(todoItemDtos); // Use Ok() to ensure a 200 status with the body
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<TodoItemDto>> GetById([FromRoute] Guid id)
+    {
+        TodoItemDto? todoItemDto = await _getTaskByIdQueryHandler.HandleAsync(new GetTaskByIdQuery(id), CancellationToken.None).ConfigureAwait(false);
+
+        return todoItemDto is not null ? Ok(todoItemDto) : NotFound();
     }
 
     [HttpPost]
