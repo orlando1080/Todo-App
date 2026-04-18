@@ -59,8 +59,8 @@ public sealed class TodoController : ControllerBase
         }
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> Delete([FromQuery] Guid id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
         await _deleteTaskCommandHandler.HandleAsync(new DeleteTaskCommand(id), CancellationToken.None).ConfigureAwait(false);
 

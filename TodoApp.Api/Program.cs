@@ -56,6 +56,7 @@ builder.Services.Scan(scan => scan
     .FromAssembliesOf(typeof(CreateTaskCommandHandler), typeof(TodoRepository))
     .AddClasses(classes => classes.Where(c =>
         c.Name.EndsWith("Repository", StringComparison.Ordinal)
+        || c.Name.EndsWith("Service", StringComparison.Ordinal)
         || c.Name.EndsWith("Processor", StringComparison.Ordinal)
         || c.Name.EndsWith("UnitOfWork", StringComparison.Ordinal)
         || c.Name.EndsWith("MessageBus", StringComparison.Ordinal)))
