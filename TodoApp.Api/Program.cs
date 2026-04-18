@@ -1,6 +1,5 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using TodoApp.Application.Services;
 using TodoApp.Application.TodoTasks.Commands;
 using TodoApp.Infrastructure.Data;
 using TodoApp.Infrastructure.Persistence;
@@ -54,10 +53,9 @@ builder.Services.AddCors(options =>
 // Group 1: Standard Abstractions (Interface -> Implementation)
 // We want these hidden behind their interfaces.
 builder.Services.Scan(scan => scan
-    .FromAssembliesOf(typeof(TodoApplicationService), typeof(TodoRepository))
+    .FromAssembliesOf(typeof(CreateTaskCommandHandler), typeof(TodoRepository))
     .AddClasses(classes => classes.Where(c =>
         c.Name.EndsWith("Repository", StringComparison.Ordinal)
-        || c.Name.EndsWith("Service", StringComparison.Ordinal)
         || c.Name.EndsWith("Processor", StringComparison.Ordinal)
         || c.Name.EndsWith("UnitOfWork", StringComparison.Ordinal)
         || c.Name.EndsWith("MessageBus", StringComparison.Ordinal)))
@@ -68,7 +66,7 @@ builder.Services.Scan(scan => scan
 // CommandHandlers usually don't need interfaces; we resolve the class directly.
 builder.Services.Scan(scan => scan
     .FromAssembliesOf(typeof(CreateTaskCommandHandler))
-    .AddClasses(classes => classes.Where(c => c.Name.EndsWith("CommandHandler", StringComparison.Ordinal)))
+    .AddClasses(classes => classes.Where(c => c.Name.EndsWith("Handler", StringComparison.Ordinal)))
     .AsSelf()
     .WithScopedLifetime());
 
