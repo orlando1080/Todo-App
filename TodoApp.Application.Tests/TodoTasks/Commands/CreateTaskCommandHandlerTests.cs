@@ -63,4 +63,18 @@ internal sealed class CreateTaskCommandHandlerTests
             _messageBusMock.Verify(x => x.PublishAsync(It.IsAny<TaskCreatedDomainEvent>()), Times.Once);
         }
     }
+
+    [Test]
+    public void HandleAsync_InvalidCommand_ThrowsArgumentNullException()
+    {
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await _sut.HandleAsync(null!, CancellationToken.None).ConfigureAwait(false));
+
+            _todoRepositoryMock.Verify(x => x.AddAsync(It.IsAny<TodoItem>()), Times.Never);
+            _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
+            _messageBusMock.Verify(x => x.PublishAsync(It.IsAny<TaskCreatedDomainEvent>()), Times.Never);
+        }
+    }
 }

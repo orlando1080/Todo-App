@@ -27,7 +27,7 @@ public sealed class TodoController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(typeof(TodoItemDto), StatusCodes.Status201Created)]
-    public async Task<ActionResult<TodoItemDto>> Create([FromBody] string title)
+    public async Task<ActionResult<TodoItemDto>> Create([FromBody] string? title)
     {
         try
         {

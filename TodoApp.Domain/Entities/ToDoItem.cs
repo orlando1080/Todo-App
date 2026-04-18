@@ -4,9 +4,14 @@ namespace TodoApp.Domain.Entities;
 
 public sealed class TodoItem : BaseEntity
 {
-    public TodoItem(string title)
+    private TodoItem(string title)
     {
-        if (string.IsNullOrWhiteSpace(title)) throw new ArgumentException("Title cannot be null or whitespace.", nameof(title));
+        // ArgumentException.ThrowIfNullOrWhiteSpace(title);
+
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            throw new ArgumentException("Title cannot be null, empty, or whitespace.", nameof(title));
+        }
 
         Id = Guid.NewGuid();
         Title = title.Trim();
