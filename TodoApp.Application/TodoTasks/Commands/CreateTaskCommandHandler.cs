@@ -23,11 +23,11 @@ public sealed class CreateTaskCommandHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<TodoItemDto> HandleAsync(CreateTaskCommand createTaskCommand, CancellationToken cancellationToken)
+    public async Task<TodoItemDto> HandleAsync(CreateTaskCommand command, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(createTaskCommand);
+        ArgumentNullException.ThrowIfNull(command);
 
-        TodoItem todoItem = TodoItem.Create(createTaskCommand.Title);
+        TodoItem todoItem = TodoItem.Create(command.Title);
 
         await _todoRepository.AddAsync(todoItem).ConfigureAwait(false);
         await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
