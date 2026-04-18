@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using NUnit.Framework;
 using TodoApp.Domain.Entities;
+using TodoApp.Domain.Events;
 
 namespace TodoApp.Domain.Tests.Entities;
 
@@ -40,10 +42,16 @@ internal sealed class TodoItemTests
     }
 
     [Test]
-    public void Create_ValidTodoItem_RaisesTaskCreatedDomainEven()
+    public void Create_ValidTodoItem_RaisesTaskCreatedDomainEvent()
     {
         TodoItem todoItem = TodoItem.Create("test");
 
-        Assert.That(todoItem.DomainEvents, Has.Count.EqualTo(1));
+        TaskCreatedDomainEvent domainEvent = todoItem.DomainEvents.OfType<TaskCreatedDomainEvent>().Single();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(domainEvent.Title, Is.EqualTo("test"));
+            Assert.That(domainEvent.Id, Is.EqualTo(todoItem.Id));
+        }
     }
 }
