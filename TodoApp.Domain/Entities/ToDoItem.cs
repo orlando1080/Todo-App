@@ -6,12 +6,7 @@ public sealed class TodoItem : BaseEntity
 {
     private TodoItem(string title)
     {
-        // ArgumentException.ThrowIfNullOrWhiteSpace(title);
-
-        if (string.IsNullOrWhiteSpace(title))
-        {
-            throw new ArgumentException("Title cannot be null, empty, or whitespace.", nameof(title));
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(title);
 
         Id = Guid.NewGuid();
         Title = title.Trim();

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using TodoApp.Domain.Entities;
 
@@ -23,11 +22,28 @@ internal sealed class TodoItemTests
         }
     }
 
-    [TestCase(null)]
     [TestCase(" ")]
     [TestCase("")]
     public void Create_InvalidTodoItem_ThrowsArgumentException(string title) =>
         Assert.Throws<ArgumentException>(() => TodoItem.Create(title));
 
+    [Test]
+    public void Create_NullTodoItem_ThrowsArgumentNullException() =>
+        Assert.Throws<ArgumentNullException>(() => TodoItem.Create(null!));
 
+    [Test]
+    public void Create_ExtraSpacesTitle_ReturnsTrimmedTitle()
+    {
+        TodoItem result = TodoItem.Create("   test   ");
+
+        Assert.That(result.Title, Is.EqualTo("test"));
+    }
+
+    [Test]
+    public void Create_ValidTodoItem_RaisesTaskCreatedDomainEven()
+    {
+        TodoItem todoItem = TodoItem.Create("test");
+
+        Assert.That(todoItem.DomainEvents, Has.Count.EqualTo(1));
+    }
 }
