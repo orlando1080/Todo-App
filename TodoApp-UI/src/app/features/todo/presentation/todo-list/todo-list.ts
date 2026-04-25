@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   inject,
   OnInit,
   signal,
@@ -40,5 +41,13 @@ export class TodoList implements OnInit {
       this._todoService.add(title);
       this.newTodoTitle.set(''); // Clear the input
     }
+  }
+
+  public delete(id: string): void {
+    this._todoService.delete(id);
+  }
+
+  public toggleIsComplete(id: string): void {
+    this._todoService.toggleIsComplete(id);
   }
 }

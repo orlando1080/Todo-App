@@ -62,4 +62,19 @@ export class TodoService {
       )
       .subscribe();
   }
+
+  public toggleIsComplete(id: string): void {
+    this.todoClient.updateIsCompleted(id).subscribe({
+      error: (err: any): void => {
+        console.error('Failed to update task', err);
+      },
+      complete: () => {
+        this._todos.update((todos) =>
+          todos.map((t) =>
+            t.id === id ? { ...t, isCompleted: !t.isCompleted } : t,
+          ),
+        );
+      },
+    });
+  }
 }

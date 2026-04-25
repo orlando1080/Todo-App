@@ -1,14 +1,8 @@
 <div class="todo-container">
   <h2>My Tasks</h2>
-  <ul>
-    @for (item of todos(); track item.id) {
-      <li [class.completed]="!item.isCompleted">
-        {{ item.title }}
-      </li>
-    } @empty {
-      <p>No tasks yet! Add one above.</p>
-    }
-  </ul>
+  @if (todos().length === 0) {
+    <p>No tasks yet! Add one below.</p>
+  }
 </div>
 
 <div class="add-task">
@@ -24,9 +18,10 @@
 
 <ul>
   @for (item of todos(); track item.id) {
-    <li>
+    <li [class.completed]="item.isCompleted">
       <span>{{ item.title }}</span>
-      <button (click)="_todoService.delete(item.id)">Delete</button>
+      <button (click)="delete(item.id)">Delete</button>
+      <button (click)="toggleIsComplete(item.id)">Toggle</button>
     </li>
   } @empty {
     <p>No tasks found. Get to work!</p>
