@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TodoApp.Application.Dtos;
-using TodoApp.Application.TodoTasks.Commands;
-using TodoApp.Application.TodoTasks.Queries;
+using ToDoApp.Application.Tasks.Commands;
+using ToDoApp.Application.Tasks.Queries;
 
 namespace TodoApp.Api.Controllers;
 
@@ -39,9 +39,9 @@ public sealed class TasksController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<TaskItemDto>> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        TaskItemDto? todoItemDto = await _getTaskByIdQueryHandler.HandleAsync(new GetTaskByIdQuery(id), cancellationToken).ConfigureAwait(false);
+        TaskItemDto? taskItemDto = await _getTaskByIdQueryHandler.HandleAsync(new GetTaskByIdQuery(id), cancellationToken).ConfigureAwait(false);
 
-        return todoItemDto is not null ? Ok(todoItemDto) : NotFound();
+        return taskItemDto is not null ? Ok(taskItemDto) : NotFound();
     }
 
     [HttpPost]

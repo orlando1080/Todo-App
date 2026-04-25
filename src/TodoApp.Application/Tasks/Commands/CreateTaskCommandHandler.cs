@@ -1,11 +1,11 @@
 ﻿using Mapster;
 using TodoApp.Application.Dtos;
-using TodoApp.Application.TodoTasks.Interfaces;
+using ToDoApp.Application.Tasks.Interfaces;
 using TodoApp.Domain.Entities;
 using TodoApp.Domain.Events;
 using TodoApp.Domain.Interfaces;
 
-namespace TodoApp.Application.TodoTasks.Commands;
+namespace ToDoApp.Application.Tasks.Commands;
 
 public sealed class CreateTaskCommandHandler
 {

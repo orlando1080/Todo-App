@@ -1,7 +1,7 @@
-﻿using TodoApp.Application.TodoTasks.Interfaces;
+﻿using ToDoApp.Application.Tasks.Interfaces;
 using TodoApp.Domain.Events;
 
-namespace TodoApp.Application.TodoTasks.Events;
+namespace ToDoApp.Application.Tasks.Events;
 
 public sealed class TaskCreatedDomainEventProcessor : ITaskCreatedDomainEventProcessor
 {

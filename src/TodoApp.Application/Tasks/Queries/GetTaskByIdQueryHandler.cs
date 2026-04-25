@@ -3,7 +3,7 @@ using TodoApp.Application.Dtos;
 using TodoApp.Domain.Entities;
 using TodoApp.Domain.Interfaces;
 
-namespace TodoApp.Application.TodoTasks.Queries;
+namespace ToDoApp.Application.Tasks.Queries;
 
 public sealed class GetTaskByIdQueryHandler
 {

@@ -1,6 +1,6 @@
 ﻿using Moq;
-using TodoApp.Application.TodoTasks.Commands;
-using TodoApp.Application.TodoTasks.Interfaces;
+using ToDoApp.Application.Tasks.Commands;
+using ToDoApp.Application.Tasks.Interfaces;
 using TodoApp.Domain.Entities;
 using TodoApp.Domain.Interfaces;
 

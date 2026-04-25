@@ -1,5 +1,5 @@
 ﻿using Moq;
-using TodoApp.Application.TodoTasks.Commands;
+using ToDoApp.Application.Tasks.Commands;
 using TodoApp.Domain.Interfaces;
 
 namespace TodoApp.Application.Tests.TodoTasks.Commands;

@@ -1,7 +1,7 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using TodoApp.Api.Middleware;
-using TodoApp.Application.TodoTasks.Commands;
+using ToDoApp.Application.Tasks.Commands;
 using TodoApp.Infrastructure.Data;
 using TodoApp.Infrastructure.Persistence;
 using TodoApp.Infrastructure.Queues;

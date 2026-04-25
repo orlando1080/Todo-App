@@ -1,4 +1,4 @@
-﻿using TodoApp.Application.TodoTasks.Interfaces;
+﻿using ToDoApp.Application.Tasks.Interfaces;
 using TodoApp.Infrastructure.Data;
 
 namespace TodoApp.Infrastructure.Persistence;

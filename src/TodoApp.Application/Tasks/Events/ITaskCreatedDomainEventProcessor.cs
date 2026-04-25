@@ -1,6 +1,6 @@
 ﻿using TodoApp.Domain.Events;
 
-namespace TodoApp.Application.TodoTasks.Events;
+namespace ToDoApp.Application.Tasks.Events;
 
 public interface ITaskCreatedDomainEventProcessor
 {

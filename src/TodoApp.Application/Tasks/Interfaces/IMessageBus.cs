@@ -1,4 +1,4 @@
-﻿namespace TodoApp.Application.TodoTasks.Interfaces;
+﻿namespace ToDoApp.Application.Tasks.Interfaces;
 
 public interface IMessageBus
 {

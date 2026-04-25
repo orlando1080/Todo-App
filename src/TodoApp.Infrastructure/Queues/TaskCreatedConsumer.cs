@@ -1,5 +1,5 @@
 ﻿using MassTransit;
-using TodoApp.Application.TodoTasks.Events;
+using ToDoApp.Application.Tasks.Events;
 using TodoApp.Domain.Events;
 
 namespace TodoApp.Infrastructure.Queues;
