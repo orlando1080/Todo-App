@@ -2,8 +2,8 @@
   "runtime": "Default",
   "documentGenerator": {
     "aspNetCoreToOpenApi": {
-      "project": "../TodoApp.Api/TodoApp.Api.csproj",
-      "msBuildProjectExtensions": "bin/Debug/net10.0",
+      "project": "../src/TodoApp.Api/TodoApp.Api.csproj",
+      "msBuildProjectExtensionsPath": "../src/TodoApp.Api/obj",
       "output": "openapi.json",
       "outputType": "OpenApi3"
     }

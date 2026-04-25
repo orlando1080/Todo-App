@@ -24,9 +24,9 @@ public sealed class TodoRepository : ITodoRepository
             .SingleOrDefaultAsync(todoItem => todoItem.Id == id)
             .ConfigureAwait(false);
 
-    public async Task AddAsync(TodoItem item) =>
+    public async Task AddAsync(TodoItem item, CancellationToken cancellationToken) =>
         await _context.Todos
-            .AddAsync(item)
+            .AddAsync(item, cancellationToken)
             .ConfigureAwait(false);
 
 
@@ -39,6 +39,5 @@ public sealed class TodoRepository : ITodoRepository
     public async Task UpdateAsync(TodoItem item)
     {
         _context.Todos.Update(item);
-        await _context.SaveChangesAsync().ConfigureAwait(false);
     }
 }

@@ -54,4 +54,25 @@ internal sealed class TodoItemTests
             Assert.That(domainEvent.Id, Is.EqualTo(todoItem.Id));
         }
     }
+
+    [Test]
+    public void ToggleIsCompleted_ToggleOnce_EqualsTrue()
+    {
+        TodoItem todoItem = TodoItem.Create("test");
+
+        todoItem.ToggleIsCompleted();
+
+        Assert.That(todoItem.IsCompleted, Is.True);
+    }
+
+    [Test]
+    public void ToggleIsCompleted_ToggleTwice_EqualsFalse()
+    {
+        TodoItem todoItem = TodoItem.Create("test");
+
+        todoItem.ToggleIsCompleted();
+        todoItem.ToggleIsCompleted();
+
+        Assert.That(todoItem.IsCompleted, Is.False);
+    }
 }

@@ -29,7 +29,8 @@ public sealed class CreateTaskCommandHandler
 
         TodoItem todoItem = TodoItem.Create(command.Title);
 
-        await _todoRepository.AddAsync(todoItem).ConfigureAwait(false);
+        await _todoRepository.AddAsync(todoItem, cancellationToken).ConfigureAwait(false);
+
         await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
 
         foreach (IDomainEvent domainEvent in todoItem.DomainEvents)

@@ -24,9 +24,14 @@ public sealed class TodoItem : BaseEntity
         return todoItem;
     }
 
+    public void ToggleIsCompleted()
+    {
+        IsCompleted = !IsCompleted;
+    }
+
     public Guid Id { get; init; }
 
     public string Title { get; private set; }
 
-    public bool IsCompleted { get; init; }
+    public bool IsCompleted { get; private set; }
 }

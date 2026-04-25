@@ -1,5 +1,6 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using TodoApp.Api.Middleware;
 using TodoApp.Application.TodoTasks.Commands;
 using TodoApp.Infrastructure.Data;
 using TodoApp.Infrastructure.Persistence;
@@ -73,17 +74,21 @@ builder.Services.Scan(scan => scan
 
 WebApplication app = builder.Build();
 
+// Configure the HTTP request pipeline.
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app.UseHttpsRedirection();
+
 app.UseCors();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     // app.MapOpenApi();
     app.UseOpenApi();
+    app.UseSwaggerUi();
 }
 
 app.MapControllers();
 
-app.UseHttpsRedirection();
 
 app.Run();
