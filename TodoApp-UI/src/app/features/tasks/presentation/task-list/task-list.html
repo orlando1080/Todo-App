@@ -1,0 +1,29 @@
+<div class="todo-container">
+  <h2>My Tasks</h2>
+  @if (tasks().length === 0) {
+    <p>No tasks yet! Add one below.</p>
+  }
+</div>
+
+<div class="add-task">
+  <input
+    [(ngModel)]="taskTitleInput"
+    (keyup.enter)="onCreateTask()"
+    placeholder="What needs to be done?"
+  />
+  <button (click)="onCreateTask()">Add Task</button>
+</div>
+
+<hr />
+
+<ul>
+  @for (task of tasks(); track task.id) {
+    <li [class.completed]="task.isCompleted">
+      <span>{{ task.title }}</span>
+      <button (click)="OnDeleteTask(task.id)">Delete</button>
+      <button (click)="onToggleCompletion(task.id)">Toggle</button>
+    </li>
+  } @empty {
+    <p>No tasks found. Get to work!</p>
+  }
+</ul>

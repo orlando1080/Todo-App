@@ -7,23 +7,23 @@ import {
 } from '@angular/core';
 import { catchError, EMPTY, Observable, tap } from 'rxjs';
 
-import { TodoClient, TodoItemDto } from '@api';
+import { TasksClient, TaskItemDto } from '@api';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TodoService {
-  private _todos: WritableSignal<TodoItemDto[]> = signal<TodoItemDto[]>([]);
-  public todos: Signal<TodoItemDto[]> = this._todos.asReadonly(); // Publicly read-only for safety
+export class TaskService {
+  private _tasks: WritableSignal<TaskItemDto[]> = signal<TaskItemDto[]>([]);
+  public tasksSignal: Signal<TaskItemDto[]> = this._tasks.asReadonly(); // Publicly read-only for safety
 
-  private todoClient: TodoClient = inject(TodoClient);
+  private tasksClient: TasksClient = inject(TasksClient);
 
-  public getAll(): void {
-    this.todoClient
+  public loadTasks(): void {
+    this.tasksClient
       .getAll()
       .pipe(
         // 'tap' is like a "Side Effect" - look but don't touch
-        tap((data) => this._todos.set(data)),
+        tap((data) => this._tasks.set(data)),
         catchError((err: any): Observable<never> => {
           console.error('Failed to load tasks', err);
           return EMPTY;
@@ -32,45 +32,45 @@ export class TodoService {
       .subscribe(); // Trigger the request
   }
 
-  public delete(id: string): void {
+  public deleteTask(id: string): void {
     // Capture the old state (in case we need to roll back)
-    const previousTodos: TodoItemDto[] = this._todos();
+    const previousTasks: TaskItemDto[] = this._tasks();
 
     // Optimistic Update: Remove it from the UI immediately
-    this._todos.set(
-      previousTodos.filter((item: TodoItemDto) => item.id !== id),
+    this._tasks.set(
+      previousTasks.filter((item: TaskItemDto) => item.id !== id),
     );
 
     // Make the actual API call
-    this.todoClient.delete(id).subscribe({
+    this.tasksClient.delete(id).subscribe({
       error: (err: any): void => {
         // If the ApI fails, roll back the UI
         console.error('Delete failed, rolling back!', err);
-        this._todos.set(previousTodos);
+        this._tasks.set(previousTasks);
       },
     });
   }
 
-  public add(title: string) {
-    this.todoClient
+  public createTask(title: string) {
+    this.tasksClient
       .create(title)
       .pipe(
-        tap((newTodo) => {
+        tap((newTask) => {
           // Spread operator: Take old todos, add the new one
-          this._todos.update((current) => [...current, newTodo]);
+          this._tasks.update((current) => [...current, newTask]);
         }),
       )
       .subscribe();
   }
 
-  public toggleIsComplete(id: string): void {
-    this.todoClient.updateIsCompleted(id).subscribe({
+  public toggleTaskCompletion(id: string): void {
+    this.tasksClient.toggleCompletion(id).subscribe({
       error: (err: any): void => {
         console.error('Failed to update task', err);
       },
       complete: () => {
-        this._todos.update((todos) =>
-          todos.map((t) =>
+        this._tasks.update((tasks) =>
+          tasks.map((t) =>
             t.id === id ? { ...t, isCompleted: !t.isCompleted } : t,
           ),
         );

@@ -6,7 +6,7 @@ import {
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 
-import { TodoClient } from '@api';
+import { TasksClient } from '@api';
 
 import { routes } from './app.routes';
 
@@ -16,6 +16,6 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(),
-    TodoClient,
+    TasksClient,
   ],
 };

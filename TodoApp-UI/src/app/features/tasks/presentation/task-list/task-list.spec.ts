@@ -2,21 +2,21 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DebugElement, WritableSignal } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
-import { TodoItemDto } from '@api';
+import { TaskItemDto } from '@api';
 
-import { TodoService } from '../../data-access/todo.service';
-import { createTodoServiceStub } from '../../data-access/todo.service.stub';
+import { TaskService } from '../../data-access/task.service';
+import { createTaskServiceStub } from '../../data-access/task.service.stub';
 
-import { TodoList } from './todo-list';
+import { TaskList } from './task-list';
 
-describe('TodoList', () => {
-  let component: TodoList;
-  let fixture: ComponentFixture<TodoList>;
+describe('TaskList', () => {
+  let component: TaskList;
+  let fixture: ComponentFixture<TaskList>;
   let dependencies: {
-    mockTodoService: TodoService;
+    mockTaskService: TaskService;
   };
-  let todoStubSignal: WritableSignal<TodoItemDto[]>;
-  let todoServiceStub;
+  let taskStubSignal: WritableSignal<TaskItemDto[]>;
+  let taskServiceStub;
 
   function getText(): DebugElement {
     return fixture.debugElement.query(By.css('span'));
@@ -27,24 +27,24 @@ describe('TodoList', () => {
   }
 
   beforeEach(async () => {
-    todoServiceStub = createTodoServiceStub();
-    todoStubSignal = todoServiceStub.todoItems;
+    taskServiceStub = createTaskServiceStub();
+    taskStubSignal = taskServiceStub.taskItems;
 
     dependencies = {
-      mockTodoService: todoServiceStub.stub,
+      mockTaskService: taskServiceStub.stub,
     };
 
     await TestBed.configureTestingModule({
-      imports: [TodoList],
+      imports: [TaskList],
       providers: [
         {
-          provide: TodoService,
-          useValue: dependencies.mockTodoService,
+          provide: TaskService,
+          useValue: dependencies.mockTaskService,
         },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(TodoList);
+    fixture = TestBed.createComponent(TaskList);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -59,17 +59,17 @@ describe('TodoList', () => {
     });
 
     it('should call getAll', () => {
-      expect(dependencies.mockTodoService.getAll).toHaveBeenCalled();
+      expect(dependencies.mockTaskService.loadTasks).toHaveBeenCalled();
     });
 
-    it('should have 4 todos', () => {
+    it('should have 4 tasks', () => {
       expect(fixture.debugElement.queryAll(By.css('li')).length).toEqual(4);
     });
   });
 
   describe('on initialisation with empty list', () => {
     beforeEach(() => {
-      todoStubSignal.set([]);
+      taskStubSignal.set([]);
       fixture.detectChanges();
     });
 
@@ -87,17 +87,19 @@ describe('TodoList', () => {
 
     beforeEach(() => {
       title = 'new title';
-      fixture.componentRef.instance.newTodoTitle.set(title);
+      fixture.componentRef.instance.taskTitleInput.set(title);
       fixture.detectChanges();
       getButton().nativeElement.click();
     });
 
     it('should add task to the state service', () => {
-      expect(dependencies.mockTodoService.add).toHaveBeenCalledWith(title);
+      expect(dependencies.mockTaskService.createTask).toHaveBeenCalledWith(
+        title,
+      );
     });
 
     it('should reset the input to empty', () => {
-      expect(fixture.componentInstance.newTodoTitle()).toBe('');
+      expect(fixture.componentInstance.taskTitleInput()).toBe('');
     });
   });
 });

@@ -15,16 +15,16 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
-export interface ITodoClient {
-    getAll(): Observable<TodoItemDto[]>;
-    create(title: string): Observable<TodoItemDto>;
-    getById(id: string): Observable<TodoItemDto>;
-    updateIsCompleted(id: string): Observable<FileResponse>;
+export interface ITasksClient {
+    getAll(): Observable<TaskItemDto[]>;
+    create(title: string): Observable<TaskItemDto>;
+    getById(id: string): Observable<TaskItemDto>;
+    toggleCompletion(id: string): Observable<FileResponse>;
     delete(id: string): Observable<FileResponse>;
 }
 
 @Injectable()
-export class TodoClient implements ITodoClient {
+export class TasksClient implements ITasksClient {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -34,8 +34,8 @@ export class TodoClient implements ITodoClient {
         this.baseUrl = baseUrl ?? "http://localhost:5289";
     }
 
-    getAll(): Observable<TodoItemDto[]> {
-        let url_ = this.baseUrl + "/api/Todo";
+    getAll(): Observable<TaskItemDto[]> {
+        let url_ = this.baseUrl + "/api/Tasks";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -53,14 +53,14 @@ export class TodoClient implements ITodoClient {
                 try {
                     return this.processGetAll(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<TodoItemDto[]>;
+                    return _observableThrow(e) as any as Observable<TaskItemDto[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<TodoItemDto[]>;
+                return _observableThrow(response_) as any as Observable<TaskItemDto[]>;
         }));
     }
 
-    protected processGetAll(response: HttpResponseBase): Observable<TodoItemDto[]> {
+    protected processGetAll(response: HttpResponseBase): Observable<TaskItemDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -70,7 +70,7 @@ export class TodoClient implements ITodoClient {
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TodoItemDto[];
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TaskItemDto[];
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -78,11 +78,11 @@ export class TodoClient implements ITodoClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<TodoItemDto[]>(null as any);
+        return _observableOf<TaskItemDto[]>(null as any);
     }
 
-    create(title: string): Observable<TodoItemDto> {
-        let url_ = this.baseUrl + "/api/Todo";
+    create(title: string): Observable<TaskItemDto> {
+        let url_ = this.baseUrl + "/api/Tasks";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(title);
@@ -104,14 +104,14 @@ export class TodoClient implements ITodoClient {
                 try {
                     return this.processCreate(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<TodoItemDto>;
+                    return _observableThrow(e) as any as Observable<TaskItemDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<TodoItemDto>;
+                return _observableThrow(response_) as any as Observable<TaskItemDto>;
         }));
     }
 
-    protected processCreate(response: HttpResponseBase): Observable<TodoItemDto> {
+    protected processCreate(response: HttpResponseBase): Observable<TaskItemDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -121,7 +121,7 @@ export class TodoClient implements ITodoClient {
         if (status === 201) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result201: any = null;
-            result201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TodoItemDto;
+            result201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TaskItemDto;
             return _observableOf(result201);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -129,11 +129,11 @@ export class TodoClient implements ITodoClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<TodoItemDto>(null as any);
+        return _observableOf<TaskItemDto>(null as any);
     }
 
-    getById(id: string): Observable<TodoItemDto> {
-        let url_ = this.baseUrl + "/api/Todo/{id}";
+    getById(id: string): Observable<TaskItemDto> {
+        let url_ = this.baseUrl + "/api/Tasks/{id}";
         if (id === undefined || id === null)
             throw new globalThis.Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -154,14 +154,14 @@ export class TodoClient implements ITodoClient {
                 try {
                     return this.processGetById(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<TodoItemDto>;
+                    return _observableThrow(e) as any as Observable<TaskItemDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<TodoItemDto>;
+                return _observableThrow(response_) as any as Observable<TaskItemDto>;
         }));
     }
 
-    protected processGetById(response: HttpResponseBase): Observable<TodoItemDto> {
+    protected processGetById(response: HttpResponseBase): Observable<TaskItemDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -171,7 +171,7 @@ export class TodoClient implements ITodoClient {
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TodoItemDto;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TaskItemDto;
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -179,11 +179,11 @@ export class TodoClient implements ITodoClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<TodoItemDto>(null as any);
+        return _observableOf<TaskItemDto>(null as any);
     }
 
-    updateIsCompleted(id: string): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/Todo/{id}";
+    toggleCompletion(id: string): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Tasks/{id}";
         if (id === undefined || id === null)
             throw new globalThis.Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -198,11 +198,11 @@ export class TodoClient implements ITodoClient {
         };
 
         return this.http.request("patch", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateIsCompleted(response_);
+            return this.processToggleCompletion(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processUpdateIsCompleted(response_ as any);
+                    return this.processToggleCompletion(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<FileResponse>;
                 }
@@ -211,7 +211,7 @@ export class TodoClient implements ITodoClient {
         }));
     }
 
-    protected processUpdateIsCompleted(response: HttpResponseBase): Observable<FileResponse> {
+    protected processToggleCompletion(response: HttpResponseBase): Observable<FileResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -238,7 +238,7 @@ export class TodoClient implements ITodoClient {
     }
 
     delete(id: string): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/Todo/{id}";
+        let url_ = this.baseUrl + "/api/Tasks/{id}";
         if (id === undefined || id === null)
             throw new globalThis.Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -293,7 +293,7 @@ export class TodoClient implements ITodoClient {
     }
 }
 
-export interface TodoItemDto {
+export interface TaskItemDto {
     id: string;
     title?: string;
     isCompleted?: boolean;

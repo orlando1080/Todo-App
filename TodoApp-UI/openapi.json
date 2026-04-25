@@ -11,12 +11,12 @@
     }
   ],
   "paths": {
-    "/api/Todo": {
+    "/api/Tasks": {
       "get": {
         "tags": [
-          "Todo"
+          "Tasks"
         ],
-        "operationId": "Todo_GetAll",
+        "operationId": "Tasks_GetAll",
         "responses": {
           "200": {
             "description": "",
@@ -25,7 +25,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TodoItemDto"
+                    "$ref": "#/components/schemas/TaskItemDto"
                   }
                 }
               }
@@ -35,9 +35,9 @@
       },
       "post": {
         "tags": [
-          "Todo"
+          "Tasks"
         ],
-        "operationId": "Todo_Create",
+        "operationId": "Tasks_Create",
         "requestBody": {
           "x-name": "title",
           "content": {
@@ -56,7 +56,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TodoItemDto"
+                  "$ref": "#/components/schemas/TaskItemDto"
                 }
               }
             }
@@ -64,12 +64,12 @@
         }
       }
     },
-    "/api/Todo/{id}": {
+    "/api/Tasks/{id}": {
       "get": {
         "tags": [
-          "Todo"
+          "Tasks"
         ],
-        "operationId": "Todo_GetById",
+        "operationId": "Tasks_GetById",
         "parameters": [
           {
             "name": "id",
@@ -88,7 +88,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TodoItemDto"
+                  "$ref": "#/components/schemas/TaskItemDto"
                 }
               }
             }
@@ -97,9 +97,9 @@
       },
       "patch": {
         "tags": [
-          "Todo"
+          "Tasks"
         ],
-        "operationId": "Todo_UpdateIsCompleted",
+        "operationId": "Tasks_ToggleCompletion",
         "parameters": [
           {
             "name": "id",
@@ -128,9 +128,9 @@
       },
       "delete": {
         "tags": [
-          "Todo"
+          "Tasks"
         ],
-        "operationId": "Todo_Delete",
+        "operationId": "Tasks_Delete",
         "parameters": [
           {
             "name": "id",
@@ -161,7 +161,7 @@
   },
   "components": {
     "schemas": {
-      "TodoItemDto": {
+      "TaskItemDto": {
         "type": "object",
         "additionalProperties": false,
         "required": [
