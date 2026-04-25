@@ -6,7 +6,7 @@ using TodoApp.Application.TodoTasks.Queries;
 namespace TodoApp.Api.Controllers;
 
 [ApiController, Route("api/[Controller]")] // This makes the URL: api/todo
-public sealed class TodoController : ControllerBase
+public sealed class TasksController : ControllerBase
 {
     private readonly CreateTaskCommandHandler _createTaskCommandHandler;
     private readonly GetAllTasksQueryHandler _getAllTasksQueryHandler;
@@ -14,7 +14,7 @@ public sealed class TodoController : ControllerBase
     private readonly GetTaskByIdQueryHandler _getTaskByIdQueryHandler;
     private readonly ToggleCompleteTaskCommandHandler _toggleCompleteTaskCommandHandler;
 
-    public TodoController(
+    public TasksController(
         CreateTaskCommandHandler createTaskCommandHandler,
         GetAllTasksQueryHandler getAllTasksQueryHandler,
         DeleteTaskCommandHandler deleteTaskCommandHandler,
@@ -29,32 +29,32 @@ public sealed class TodoController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<TodoItemDto[]>> GetAll(CancellationToken cancellationToken)
+    public async Task<ActionResult<TaskItemDto[]>> GetAll(CancellationToken cancellationToken)
     {
-        TodoItemDto[] todoItemDtos = await _getAllTasksQueryHandler.HandleAsync(new GetAllTasksQuery(), cancellationToken).ConfigureAwait(false);
+        TaskItemDto[] todoItemDtos = await _getAllTasksQueryHandler.HandleAsync(new GetAllTasksQuery(), cancellationToken).ConfigureAwait(false);
 
         return Ok(todoItemDtos); // Use Ok() to ensure a 200 status with the body
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<TodoItemDto>> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult<TaskItemDto>> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        TodoItemDto? todoItemDto = await _getTaskByIdQueryHandler.HandleAsync(new GetTaskByIdQuery(id), cancellationToken).ConfigureAwait(false);
+        TaskItemDto? todoItemDto = await _getTaskByIdQueryHandler.HandleAsync(new GetTaskByIdQuery(id), cancellationToken).ConfigureAwait(false);
 
         return todoItemDto is not null ? Ok(todoItemDto) : NotFound();
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(TodoItemDto), StatusCodes.Status201Created)]
-    public async Task<ActionResult<TodoItemDto>> Create([FromBody] string title, CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(TaskItemDto), StatusCodes.Status201Created)]
+    public async Task<ActionResult<TaskItemDto>> Create([FromBody] string title, CancellationToken cancellationToken)
     {
         try
         {
             CreateTaskCommand command = new(title);
 
-            TodoItemDto todoItemDto = await _createTaskCommandHandler.HandleAsync(command, cancellationToken).ConfigureAwait(false);
+            TaskItemDto taskItemDto = await _createTaskCommandHandler.HandleAsync(command, cancellationToken).ConfigureAwait(false);
 
-            return CreatedAtAction(nameof(Create), todoItemDto);
+            return CreatedAtAction(nameof(Create), taskItemDto);
         }
         catch (ArgumentException e)
         {
@@ -63,7 +63,7 @@ public sealed class TodoController : ControllerBase
     }
 
     [HttpPatch("{id}")]
-    public async Task<IActionResult> UpdateIsCompleted([FromRoute] Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> ToggleCompletion([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         await _toggleCompleteTaskCommandHandler.HandleAsync(new ToggleCompleteTaskCommand(id), cancellationToken).ConfigureAwait(false);
 

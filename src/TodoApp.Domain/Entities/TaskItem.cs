@@ -2,9 +2,9 @@
 
 namespace TodoApp.Domain.Entities;
 
-public sealed class TodoItem : BaseEntity
+public sealed class TaskItem : BaseEntity
 {
-    private TodoItem(string title)
+    private TaskItem(string title)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(title);
 
@@ -13,15 +13,15 @@ public sealed class TodoItem : BaseEntity
         IsCompleted = false;
     }
 
-    public static TodoItem Create(string title)
+    public static TaskItem Create(string title)
     {
-        TodoItem todoItem = new(title);
+        TaskItem taskItem = new(title);
 
         // ANNOUNCING: "This is a new object"
 
-        todoItem.AddDomainEvent(new TaskCreatedDomainEvent(todoItem.Id, todoItem.Title));
+        taskItem.AddDomainEvent(new TaskCreatedDomainEvent(taskItem.Id, taskItem.Title));
 
-        return todoItem;
+        return taskItem;
     }
 
     public void ToggleIsCompleted()

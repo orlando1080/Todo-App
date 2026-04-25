@@ -30,7 +30,7 @@ builder.Services.AddControllers();
 // 2. Register the Database (Ledger)
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddDbContext<TodoDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<TodoAppDb>(options => options.UseSqlServer(connectionString));
 
 
 builder.Services.AddMassTransit(x =>
@@ -54,7 +54,7 @@ builder.Services.AddCors(options =>
 // Group 1: Standard Abstractions (Interface -> Implementation)
 // We want these hidden behind their interfaces.
 builder.Services.Scan(scan => scan
-    .FromAssembliesOf(typeof(CreateTaskCommandHandler), typeof(TodoRepository))
+    .FromAssembliesOf(typeof(CreateTaskCommandHandler), typeof(TaskItemRepository))
     .AddClasses(classes => classes.Where(c =>
         c.Name.EndsWith("Repository", StringComparison.Ordinal)
         || c.Name.EndsWith("Service", StringComparison.Ordinal)

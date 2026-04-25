@@ -7,13 +7,13 @@ using TodoApp.Domain.Events;
 namespace TodoApp.Domain.Tests.Entities;
 
 [TestFixture]
-[TestOf(typeof(TodoItem))]
-internal sealed class TodoItemTests
+[TestOf(typeof(TaskItem))]
+internal sealed class TaskItemTests
 {
     [Test]
     public void Create_ValidTodoItem_ReturnsTodoItem()
     {
-        TodoItem result = TodoItem.Create("test");
+        TaskItem result = TaskItem.Create("test");
 
         using (Assert.EnterMultipleScope())
         {
@@ -27,16 +27,16 @@ internal sealed class TodoItemTests
     [TestCase(" ")]
     [TestCase("")]
     public void Create_InvalidTodoItem_ThrowsArgumentException(string title) =>
-        Assert.Throws<ArgumentException>(() => TodoItem.Create(title));
+        Assert.Throws<ArgumentException>(() => TaskItem.Create(title));
 
     [Test]
     public void Create_NullTodoItem_ThrowsArgumentNullException() =>
-        Assert.Throws<ArgumentNullException>(() => TodoItem.Create(null!));
+        Assert.Throws<ArgumentNullException>(() => TaskItem.Create(null!));
 
     [Test]
     public void Create_ExtraSpacesTitle_ReturnsTrimmedTitle()
     {
-        TodoItem result = TodoItem.Create("   test   ");
+        TaskItem result = TaskItem.Create("   test   ");
 
         Assert.That(result.Title, Is.EqualTo("test"));
     }
@@ -44,35 +44,35 @@ internal sealed class TodoItemTests
     [Test]
     public void Create_ValidTodoItem_RaisesTaskCreatedDomainEvent()
     {
-        TodoItem todoItem = TodoItem.Create("test");
+        TaskItem taskItem = TaskItem.Create("test");
 
-        TaskCreatedDomainEvent domainEvent = todoItem.DomainEvents.OfType<TaskCreatedDomainEvent>().Single();
+        TaskCreatedDomainEvent domainEvent = taskItem.DomainEvents.OfType<TaskCreatedDomainEvent>().Single();
 
         using (Assert.EnterMultipleScope())
         {
             Assert.That(domainEvent.Title, Is.EqualTo("test"));
-            Assert.That(domainEvent.Id, Is.EqualTo(todoItem.Id));
+            Assert.That(domainEvent.Id, Is.EqualTo(taskItem.Id));
         }
     }
 
     [Test]
     public void ToggleIsCompleted_ToggleOnce_EqualsTrue()
     {
-        TodoItem todoItem = TodoItem.Create("test");
+        TaskItem taskItem = TaskItem.Create("test");
 
-        todoItem.ToggleIsCompleted();
+        taskItem.ToggleIsCompleted();
 
-        Assert.That(todoItem.IsCompleted, Is.True);
+        Assert.That(taskItem.IsCompleted, Is.True);
     }
 
     [Test]
     public void ToggleIsCompleted_ToggleTwice_EqualsFalse()
     {
-        TodoItem todoItem = TodoItem.Create("test");
+        TaskItem taskItem = TaskItem.Create("test");
 
-        todoItem.ToggleIsCompleted();
-        todoItem.ToggleIsCompleted();
+        taskItem.ToggleIsCompleted();
+        taskItem.ToggleIsCompleted();
 
-        Assert.That(todoItem.IsCompleted, Is.False);
+        Assert.That(taskItem.IsCompleted, Is.False);
     }
 }

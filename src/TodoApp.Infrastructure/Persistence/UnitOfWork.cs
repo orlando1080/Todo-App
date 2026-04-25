@@ -5,9 +5,9 @@ namespace TodoApp.Infrastructure.Persistence;
 
 public sealed class UnitOfWork : IUnitOfWork
 {
-    private readonly TodoDbContext _context;
+    private readonly TodoAppDb _context;
 
-    public UnitOfWork(TodoDbContext context)
+    public UnitOfWork(TodoAppDb context)
     {
         _context = context;
     }

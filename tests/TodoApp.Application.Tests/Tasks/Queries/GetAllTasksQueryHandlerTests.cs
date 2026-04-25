@@ -10,7 +10,7 @@ namespace TodoApp.Application.Tests.TodoTasks.Queries;
 [TestOf(typeof(GetAllTasksQueryHandler))]
 internal sealed class GetAllTasksQueryHandlerTests
 {
-    private readonly Mock<ITodoRepository> _todoRepositoryMock = new();
+    private readonly Mock<ITaskItemRepository> _todoRepositoryMock = new();
 
     private GetAllTasksQueryHandler _sut = null!;
 
@@ -32,19 +32,19 @@ internal sealed class GetAllTasksQueryHandlerTests
     [Test]
     public async Task HandleAsync_ValidQuery_ReturnsTodoItemDtos()
     {
-        TodoItem todoItem1 = TodoItem.Create("test");
-        TodoItem todoItem2 = TodoItem.Create("test2");
+        TaskItem taskItem1 = TaskItem.Create("test");
+        TaskItem taskItem2 = TaskItem.Create("test2");
 
-        _todoRepositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync([todoItem1, todoItem2]);
+        _todoRepositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync([taskItem1, taskItem2]);
 
-        TodoItemDto[] result = await _sut.HandleAsync(new GetAllTasksQuery(), CancellationToken.None).ConfigureAwait(false);
+        TaskItemDto[] result = await _sut.HandleAsync(new GetAllTasksQuery(), CancellationToken.None).ConfigureAwait(false);
 
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Has.Length.EqualTo(2));
-            Assert.That(result[0].Title, Is.EqualTo(todoItem1.Title));
-            Assert.That(result[1].Title, Is.EqualTo(todoItem2.Title));
+            Assert.That(result[0].Title, Is.EqualTo(taskItem1.Title));
+            Assert.That(result[1].Title, Is.EqualTo(taskItem2.Title));
             _todoRepositoryMock.Verify(x => x.GetAllAsync(), Times.Once);
         }
     }
@@ -52,9 +52,9 @@ internal sealed class GetAllTasksQueryHandlerTests
     [Test]
     public async Task HandleAsync_EmptyRepository_ReturnsEmptyArray()
     {
-        _todoRepositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(Array.Empty<TodoItem>());
+        _todoRepositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(Array.Empty<TaskItem>());
 
-        TodoItemDto[] result = await _sut.HandleAsync(new GetAllTasksQuery(), CancellationToken.None).ConfigureAwait(false);
+        TaskItemDto[] result = await _sut.HandleAsync(new GetAllTasksQuery(), CancellationToken.None).ConfigureAwait(false);
 
         using (Assert.EnterMultipleScope())
         {

@@ -10,7 +10,7 @@ namespace TodoApp.Application.Tests.TodoTasks.Commands;
 [TestOf(typeof(ToggleCompleteTaskCommandHandler))]
 internal sealed class ToggleCompleteTaskCommandHandlerTests
 {
-    private readonly Mock<ITodoRepository> _todoRepositoryMock = new();
+    private readonly Mock<ITaskItemRepository> _todoRepositoryMock = new();
 
     private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
 
@@ -24,9 +24,9 @@ internal sealed class ToggleCompleteTaskCommandHandlerTests
         _todoRepositoryMock.Reset();
         _unitOfWorkMock.Reset();
 
-        _todoRepositoryMock.Setup(x => x.GetByIdAsync(_todoItemId)).ReturnsAsync(TodoItem.Create("test"));
+        _todoRepositoryMock.Setup(x => x.GetByIdAsync(_todoItemId)).ReturnsAsync(TaskItem.Create("test"));
 
-        _todoRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<TodoItem>())).Returns(Task.CompletedTask);
+        _todoRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<TaskItem>())).Returns(Task.CompletedTask);
 
         _unitOfWorkMock.Setup(x => x.CommitAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
@@ -44,10 +44,10 @@ internal sealed class ToggleCompleteTaskCommandHandlerTests
     [Test]
     public async Task HandleAsync_ValidTodoItem_TogglesIsCompleted()
     {
-        TodoItem? todoItem = null;
+        TaskItem? todoItem = null;
 
-        _todoRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<TodoItem>()))
-            .Callback<TodoItem>(item => todoItem = item)
+        _todoRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<TaskItem>()))
+            .Callback<TaskItem>(item => todoItem = item)
             .Returns(Task.CompletedTask);
 
         await _sut.HandleAsync(new ToggleCompleteTaskCommand(_todoItemId), CancellationToken.None).ConfigureAwait(false);
@@ -57,7 +57,7 @@ internal sealed class ToggleCompleteTaskCommandHandlerTests
             Assert.That(todoItem, Is.Not.Null);
             Assert.That(todoItem.IsCompleted, Is.True);
             _todoRepositoryMock.Verify(x => x.GetByIdAsync(_todoItemId), Times.Once);
-            _todoRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<TodoItem>()), Times.Once);
+            _todoRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<TaskItem>()), Times.Once);
             _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
     }
@@ -69,7 +69,7 @@ internal sealed class ToggleCompleteTaskCommandHandlerTests
     [Test]
     public void HandleAsync_TodoItemNotFound_ThrowsInvalidOperationException()
     {
-        _todoRepositoryMock.Setup(x => x.GetByIdAsync(_todoItemId)).ReturnsAsync((TodoItem?) null);
+        _todoRepositoryMock.Setup(x => x.GetByIdAsync(_todoItemId)).ReturnsAsync((TaskItem?) null);
 
         using (Assert.EnterMultipleScope())
         {

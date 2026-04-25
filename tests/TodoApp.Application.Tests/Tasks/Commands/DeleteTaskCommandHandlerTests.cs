@@ -8,7 +8,7 @@ namespace TodoApp.Application.Tests.TodoTasks.Commands;
 [TestOf(typeof(DeleteTaskCommandHandler))]
 internal sealed class DeleteTaskCommandHandlerTests
 {
-    private readonly Mock<ITodoRepository> _todoRepositoryMock = new();
+    private readonly Mock<ITaskItemRepository> _todoRepositoryMock = new();
 
     private DeleteTaskCommandHandler _sut = null!;
 

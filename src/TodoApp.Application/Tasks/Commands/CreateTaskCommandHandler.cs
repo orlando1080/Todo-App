@@ -9,31 +9,31 @@ namespace TodoApp.Application.TodoTasks.Commands;
 
 public sealed class CreateTaskCommandHandler
 {
-    private readonly ITodoRepository _todoRepository;
+    private readonly ITaskItemRepository _taskItemRepository;
     private readonly IMessageBus _messageBus;
     private readonly IUnitOfWork _unitOfWork;
 
     public CreateTaskCommandHandler(
-        ITodoRepository todoRepository,
+        ITaskItemRepository taskItemRepository,
         IMessageBus messageBus,
         IUnitOfWork unitOfWork)
     {
-        _todoRepository = todoRepository;
+        _taskItemRepository = taskItemRepository;
         _messageBus = messageBus;
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<TodoItemDto> HandleAsync(CreateTaskCommand command, CancellationToken cancellationToken)
+    public async Task<TaskItemDto> HandleAsync(CreateTaskCommand command, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        TodoItem todoItem = TodoItem.Create(command.Title);
+        TaskItem taskItem = TaskItem.Create(command.Title);
 
-        await _todoRepository.AddAsync(todoItem, cancellationToken).ConfigureAwait(false);
+        await _taskItemRepository.AddAsync(taskItem, cancellationToken).ConfigureAwait(false);
 
         await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
 
-        foreach (IDomainEvent domainEvent in todoItem.DomainEvents)
+        foreach (IDomainEvent domainEvent in taskItem.DomainEvents)
         {
             if (domainEvent is TaskCreatedDomainEvent created)
             {
@@ -41,6 +41,6 @@ public sealed class CreateTaskCommandHandler
             }
         }
 
-        return todoItem.Adapt<TodoItemDto>();
+        return taskItem.Adapt<TaskItemDto>();
     }
 }

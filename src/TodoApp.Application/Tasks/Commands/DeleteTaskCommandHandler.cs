@@ -4,16 +4,16 @@ namespace TodoApp.Application.TodoTasks.Commands;
 
 public sealed class DeleteTaskCommandHandler
 {
-    private readonly ITodoRepository _todoRepository;
+    private readonly ITaskItemRepository _taskItemRepository;
 
-    public DeleteTaskCommandHandler(ITodoRepository todoRepository)
+    public DeleteTaskCommandHandler(ITaskItemRepository taskItemRepository)
     {
-        _todoRepository = todoRepository;
+        _taskItemRepository = taskItemRepository;
     }
 
     public async Task HandleAsync(DeleteTaskCommand command, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(command);
-        await _todoRepository.DeleteAsync(command.Id).ConfigureAwait(false);
+        await _taskItemRepository.DeleteAsync(command.Id).ConfigureAwait(false);
     }
 }

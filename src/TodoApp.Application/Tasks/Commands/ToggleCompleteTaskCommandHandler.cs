@@ -6,12 +6,12 @@ namespace TodoApp.Application.TodoTasks.Commands;
 
 public sealed class ToggleCompleteTaskCommandHandler
 {
-    private readonly ITodoRepository _todoRepository;
+    private readonly ITaskItemRepository _taskItemRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public ToggleCompleteTaskCommandHandler(ITodoRepository todoRepository, IUnitOfWork unitOfWork)
+    public ToggleCompleteTaskCommandHandler(ITaskItemRepository taskItemRepository, IUnitOfWork unitOfWork)
     {
-        _todoRepository = todoRepository;
+        _taskItemRepository = taskItemRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -19,13 +19,13 @@ public sealed class ToggleCompleteTaskCommandHandler
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        TodoItem? todoItem = await _todoRepository.GetByIdAsync(command.Id).ConfigureAwait(false);
+        TaskItem? todoItem = await _taskItemRepository.GetByIdAsync(command.Id).ConfigureAwait(false);
 
         if (todoItem is null) throw new InvalidOperationException();
 
         todoItem.ToggleIsCompleted();
 
-        await _todoRepository.UpdateAsync(todoItem).ConfigureAwait(false);
+        await _taskItemRepository.UpdateAsync(todoItem).ConfigureAwait(false);
 
         await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
     }
