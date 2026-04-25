@@ -11,7 +11,7 @@ namespace TodoApp.Domain.Tests.Entities;
 internal sealed class TaskItemTests
 {
     [Test]
-    public void Create_ValidTodoItem_ReturnsTodoItem()
+    public void Create_ValidTaskItem_ReturnsTodoItem()
     {
         TaskItem result = TaskItem.Create("test");
 
@@ -26,11 +26,11 @@ internal sealed class TaskItemTests
 
     [TestCase(" ")]
     [TestCase("")]
-    public void Create_InvalidTodoItem_ThrowsArgumentException(string title) =>
+    public void Create_InvalidTaskItem_ThrowsArgumentException(string title) =>
         Assert.Throws<ArgumentException>(() => TaskItem.Create(title));
 
     [Test]
-    public void Create_NullTodoItem_ThrowsArgumentNullException() =>
+    public void Create_NullTaskItem_ThrowsArgumentNullException() =>
         Assert.Throws<ArgumentNullException>(() => TaskItem.Create(null!));
 
     [Test]
@@ -42,7 +42,7 @@ internal sealed class TaskItemTests
     }
 
     [Test]
-    public void Create_ValidTodoItem_RaisesTaskCreatedDomainEvent()
+    public void Create_ValidTaskItem_RaisesTaskCreatedDomainEvent()
     {
         TaskItem taskItem = TaskItem.Create("test");
 

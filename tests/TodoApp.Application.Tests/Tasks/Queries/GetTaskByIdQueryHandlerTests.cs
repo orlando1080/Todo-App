@@ -4,13 +4,13 @@ using ToDoApp.Application.Tasks.Queries;
 using TodoApp.Domain.Entities;
 using TodoApp.Domain.Interfaces;
 
-namespace TodoApp.Application.Tests.TodoTasks.Queries;
+namespace TodoApp.Application.Tests.Tasks.Queries;
 
 [TestFixture]
 [TestOf(typeof(GetTaskByIdQueryHandler))]
 internal sealed class GetTaskByIdQueryHandlerTests
 {
-    private readonly Mock<ITaskItemRepository> _todoRepositoryMock = new();
+    private readonly Mock<ITaskItemRepository> _taskItemRepositoryMock = new();
 
     private GetTaskByIdQueryHandler _sut = null!;
 
@@ -18,22 +18,22 @@ internal sealed class GetTaskByIdQueryHandlerTests
     [SetUp]
     public void SetUp()
     {
-        _todoRepositoryMock.Reset();
+        _taskItemRepositoryMock.Reset();
 
-        _sut = new GetTaskByIdQueryHandler(_todoRepositoryMock.Object);
+        _sut = new GetTaskByIdQueryHandler(_taskItemRepositoryMock.Object);
     }
 
     [TearDown]
     public void TearDown()
     {
-        _todoRepositoryMock.VerifyNoOtherCalls();
+        _taskItemRepositoryMock.VerifyNoOtherCalls();
     }
 
     [Test]
-    public async Task HandleAsync_ValidQuery_ReturnsTodoItemDto()
+    public async Task HandleAsync_ValidQuery_ReturnsTaskItemDto()
     {
         TaskItem taskItem = TaskItem.Create("test");
-        _todoRepositoryMock.Setup(x => x.GetByIdAsync(taskItem.Id)).ReturnsAsync(taskItem);
+        _taskItemRepositoryMock.Setup(x => x.GetByIdAsync(taskItem.Id)).ReturnsAsync(taskItem);
 
         TaskItemDto? result = await _sut.HandleAsync(new GetTaskByIdQuery(taskItem.Id), CancellationToken.None).ConfigureAwait(false);
 
@@ -43,7 +43,7 @@ internal sealed class GetTaskByIdQueryHandlerTests
             Assert.That(result.Title, Is.EqualTo(taskItem.Title));
             Assert.That(result.Id, Is.EqualTo(taskItem.Id));
             Assert.That(result.IsCompleted, Is.EqualTo(taskItem.IsCompleted));
-            _todoRepositoryMock.Verify(x => x.GetByIdAsync(taskItem.Id), Times.Once);
+            _taskItemRepositoryMock.Verify(x => x.GetByIdAsync(taskItem.Id), Times.Once);
         }
     }
 
@@ -54,14 +54,14 @@ internal sealed class GetTaskByIdQueryHandlerTests
     [Test]
     public async Task HandleAsync_TaskNotFound_ReturnsNull()
     {
-        _todoRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((TaskItem?) null);
+        _taskItemRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((TaskItem?) null);
 
         TaskItemDto? result = await _sut.HandleAsync(new GetTaskByIdQuery(Guid.NewGuid()), CancellationToken.None).ConfigureAwait(false);
 
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result, Is.Null);
-            _todoRepositoryMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
+            _taskItemRepositoryMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
         }
     }
 }

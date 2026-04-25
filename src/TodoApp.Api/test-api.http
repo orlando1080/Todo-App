@@ -1,11 +1,11 @@
 ﻿### Get all Todo items
-GET http://localhost:5289/api/todo
+GET http://localhost:5289/api/tasks
 Accept: application/json
 
 ###
 
 ### Create a new Todo item
-POST http://localhost:5289/api/todo
+POST http://localhost:5289/api/tasks
 Content-Type: application/json
 
 "This is a test for the  new structure"

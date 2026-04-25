@@ -18,8 +18,8 @@ public sealed class GetTaskByIdQueryHandler
     {
         ArgumentNullException.ThrowIfNull(query);
 
-        TaskItem? todoItem = await _taskItemRepository.GetByIdAsync(query.Id).ConfigureAwait(false);
+        TaskItem? taskItem = await _taskItemRepository.GetByIdAsync(query.Id).ConfigureAwait(false);
 
-        return todoItem?.Adapt<TaskItemDto>();
+        return taskItem?.Adapt<TaskItemDto>();
     }
 }

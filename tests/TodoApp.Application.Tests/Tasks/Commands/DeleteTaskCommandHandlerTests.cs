@@ -2,41 +2,41 @@
 using ToDoApp.Application.Tasks.Commands;
 using TodoApp.Domain.Interfaces;
 
-namespace TodoApp.Application.Tests.TodoTasks.Commands;
+namespace TodoApp.Application.Tests.Tasks.Commands;
 
 [TestFixture]
 [TestOf(typeof(DeleteTaskCommandHandler))]
 internal sealed class DeleteTaskCommandHandlerTests
 {
-    private readonly Mock<ITaskItemRepository> _todoRepositoryMock = new();
+    private readonly Mock<ITaskItemRepository> _taskItemRepositoryMock = new();
 
     private DeleteTaskCommandHandler _sut = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _todoRepositoryMock.Reset();
+        _taskItemRepositoryMock.Reset();
 
-        _todoRepositoryMock.Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
+        _taskItemRepositoryMock.Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
             .Returns(Task.CompletedTask);
 
-        _sut = new DeleteTaskCommandHandler(_todoRepositoryMock.Object);
+        _sut = new DeleteTaskCommandHandler(_taskItemRepositoryMock.Object);
     }
 
     [TearDown]
     public void TearDown()
     {
-        _todoRepositoryMock.VerifyNoOtherCalls();
+        _taskItemRepositoryMock.VerifyNoOtherCalls();
     }
 
     [Test]
-    public async Task HandleAsync_ValidCommand_DeletesTodoItem()
+    public async Task HandleAsync_ValidCommand_DeletesTaskItem()
     {
         Guid id = Guid.NewGuid();
 
         await _sut.HandleAsync(new DeleteTaskCommand(id), CancellationToken.None).ConfigureAwait(false);
 
-        _todoRepositoryMock.Verify(x => x.DeleteAsync(id), Times.Once);
+        _taskItemRepositoryMock.Verify(x => x.DeleteAsync(id), Times.Once);
     }
 
     [Test]
@@ -45,7 +45,7 @@ internal sealed class DeleteTaskCommandHandlerTests
         using (Assert.EnterMultipleScope())
         {
             Assert.ThrowsAsync<ArgumentNullException>(() => _sut.HandleAsync(null!, CancellationToken.None));
-            _todoRepositoryMock.Verify(x => x.DeleteAsync(It.IsAny<Guid>()), Times.Never);
+            _taskItemRepositoryMock.Verify(x => x.DeleteAsync(It.IsAny<Guid>()), Times.Never);
         }
     }
 }

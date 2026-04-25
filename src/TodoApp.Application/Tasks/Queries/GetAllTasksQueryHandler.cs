@@ -16,10 +16,10 @@ public sealed class GetAllTasksQueryHandler
 
     public async Task<TaskItemDto[]> HandleAsync(GetAllTasksQuery query, CancellationToken cancellationToken)
     {
-        TaskItem[] todoItems = await _taskItemRepository.GetAllAsync().ConfigureAwait(false);
+        TaskItem[] taskItems = await _taskItemRepository.GetAllAsync().ConfigureAwait(false);
 
         // Manual way: items.Select(x => new TodoResponse(x.id, x.Title, x.IsCompleted)).ToArray();
 
-        return todoItems.Adapt<TaskItemDto[]>(); // Mapster way
+        return taskItems.Adapt<TaskItemDto[]>(); // Mapster way
     }
 }

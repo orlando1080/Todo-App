@@ -6,13 +6,13 @@ using TodoApp.Domain.Entities;
 using TodoApp.Domain.Events;
 using TodoApp.Domain.Interfaces;
 
-namespace TodoApp.Application.Tests.TodoTasks.Commands;
+namespace TodoApp.Application.Tests.Tasks.Commands;
 
 [TestFixture]
 [TestOf(typeof(CreateTaskCommandHandler))]
 internal sealed class CreateTaskCommandHandlerTests
 {
-    private readonly Mock<ITaskItemRepository> _todoRepositoryMock = new();
+    private readonly Mock<ITaskItemRepository> _taskItemRepositoryMock = new();
 
     private readonly Mock<IMessageBus> _messageBusMock = new();
 
@@ -23,7 +23,7 @@ internal sealed class CreateTaskCommandHandlerTests
     [SetUp]
     public void SetUp()
     {
-        _todoRepositoryMock.Reset();
+        _taskItemRepositoryMock.Reset();
         _messageBusMock.Reset();
         _unitOfWorkMock.Reset();
 
@@ -33,11 +33,11 @@ internal sealed class CreateTaskCommandHandlerTests
         _unitOfWorkMock.Setup(x => x.CommitAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
-        _todoRepositoryMock.Setup(x => x.AddAsync(It.IsAny<TaskItem>()))
+        _taskItemRepositoryMock.Setup(x => x.AddAsync(It.IsAny<TaskItem>()))
             .Returns(Task.CompletedTask);
 
         _sut = new CreateTaskCommandHandler(
-            _todoRepositoryMock.Object,
+            _taskItemRepositoryMock.Object,
             _messageBusMock.Object,
             _unitOfWorkMock.Object);
     }
@@ -45,13 +45,13 @@ internal sealed class CreateTaskCommandHandlerTests
     [TearDown]
     public void TearDown()
     {
-        _todoRepositoryMock.VerifyNoOtherCalls();
+        _taskItemRepositoryMock.VerifyNoOtherCalls();
         _messageBusMock.VerifyNoOtherCalls();
         _unitOfWorkMock.VerifyNoOtherCalls();
     }
 
     [Test]
-    public async Task HandleAsync_ValidCommand_ReturnsTodoItemDto()
+    public async Task HandleAsync_ValidCommand_ReturnsTaskItemDto()
     {
         TaskItemDto result = await _sut.HandleAsync(new CreateTaskCommand("test"), CancellationToken.None)
             .ConfigureAwait(false);
@@ -62,7 +62,7 @@ internal sealed class CreateTaskCommandHandlerTests
             Assert.That(result.Id, Is.Not.EqualTo(Guid.Empty));
             Assert.That(result.IsCompleted, Is.False);
 
-            _todoRepositoryMock.Verify(x => x.AddAsync(It.IsAny<TaskItem>()), Times.Once);
+            _taskItemRepositoryMock.Verify(x => x.AddAsync(It.IsAny<TaskItem>()), Times.Once);
             _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
             _messageBusMock.Verify(x => x.PublishAsync(It.IsAny<TaskCreatedDomainEvent>()), Times.Once);
         }
@@ -76,7 +76,7 @@ internal sealed class CreateTaskCommandHandlerTests
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await _sut.HandleAsync(null!, CancellationToken.None).ConfigureAwait(false));
 
-            _todoRepositoryMock.Verify(x => x.AddAsync(It.IsAny<TaskItem>()), Times.Never);
+            _taskItemRepositoryMock.Verify(x => x.AddAsync(It.IsAny<TaskItem>()), Times.Never);
             _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
             _messageBusMock.Verify(x => x.PublishAsync(It.IsAny<TaskCreatedDomainEvent>()), Times.Never);
         }

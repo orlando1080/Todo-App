@@ -19,13 +19,13 @@ public sealed class ToggleCompleteTaskCommandHandler
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        TaskItem? todoItem = await _taskItemRepository.GetByIdAsync(command.Id).ConfigureAwait(false);
+        TaskItem? taskItem = await _taskItemRepository.GetByIdAsync(command.Id).ConfigureAwait(false);
 
-        if (todoItem is null) throw new InvalidOperationException();
+        if (taskItem is null) throw new InvalidOperationException();
 
-        todoItem.ToggleIsCompleted();
+        taskItem.ToggleIsCompleted();
 
-        await _taskItemRepository.UpdateAsync(todoItem).ConfigureAwait(false);
+        await _taskItemRepository.UpdateAsync(taskItem).ConfigureAwait(false);
 
         await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
     }
