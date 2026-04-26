@@ -29,7 +29,7 @@ public sealed class CreateTaskCommandHandler
 
         TaskItem taskItem = TaskItem.Create(command.Title);
 
-        await _taskItemRepository.AddAsync(taskItem, cancellationToken).ConfigureAwait(false);
+        await _taskItemRepository.Add(taskItem, cancellationToken).ConfigureAwait(false);
 
         await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
 

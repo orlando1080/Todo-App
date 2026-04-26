@@ -18,7 +18,7 @@ internal sealed class DeleteTaskCommandHandlerTests
         _taskItemRepositoryMock.Reset();
 
         _taskItemRepositoryMock.Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
-            .Returns(Task.CompletedTask);
+            .ReturnsAsync(true);
 
         _sut = new DeleteTaskCommandHandler(_taskItemRepositoryMock.Object);
     }

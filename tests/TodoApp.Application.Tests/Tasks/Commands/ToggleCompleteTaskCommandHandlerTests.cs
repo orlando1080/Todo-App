@@ -26,7 +26,7 @@ internal sealed class ToggleCompleteTaskCommandHandlerTests
 
         _taskItemRepositoryMock.Setup(x => x.GetByIdAsync(_todoItemId)).ReturnsAsync(TaskItem.Create("test"));
 
-        _taskItemRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<TaskItem>())).Returns(Task.CompletedTask);
+        _taskItemRepositoryMock.Setup(x => x.Update(It.IsAny<TaskItem>())).Returns(Task.CompletedTask);
 
         _unitOfWorkMock.Setup(x => x.CommitAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
@@ -46,7 +46,7 @@ internal sealed class ToggleCompleteTaskCommandHandlerTests
     {
         TaskItem? taskItem = null;
 
-        _taskItemRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<TaskItem>()))
+        _taskItemRepositoryMock.Setup(x => x.Update(It.IsAny<TaskItem>()))
             .Callback<TaskItem>(item => taskItem = item)
             .Returns(Task.CompletedTask);
 
@@ -57,7 +57,7 @@ internal sealed class ToggleCompleteTaskCommandHandlerTests
             Assert.That(taskItem, Is.Not.Null);
             Assert.That(taskItem.IsCompleted, Is.True);
             _taskItemRepositoryMock.Verify(x => x.GetByIdAsync(_todoItemId), Times.Once);
-            _taskItemRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<TaskItem>()), Times.Once);
+            _taskItemRepositoryMock.Verify(x => x.Update(It.IsAny<TaskItem>()), Times.Once);
             _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
     }

@@ -33,7 +33,7 @@ internal sealed class CreateTaskCommandHandlerTests
         _unitOfWorkMock.Setup(x => x.CommitAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
-        _taskItemRepositoryMock.Setup(x => x.AddAsync(It.IsAny<TaskItem>()))
+        _taskItemRepositoryMock.Setup(x => x.Add(It.IsAny<TaskItem>()))
             .Returns(Task.CompletedTask);
 
         _sut = new CreateTaskCommandHandler(
@@ -62,7 +62,7 @@ internal sealed class CreateTaskCommandHandlerTests
             Assert.That(result.Id, Is.Not.EqualTo(Guid.Empty));
             Assert.That(result.IsCompleted, Is.False);
 
-            _taskItemRepositoryMock.Verify(x => x.AddAsync(It.IsAny<TaskItem>()), Times.Once);
+            _taskItemRepositoryMock.Verify(x => x.Add(It.IsAny<TaskItem>()), Times.Once);
             _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
             _messageBusMock.Verify(x => x.PublishAsync(It.IsAny<TaskCreatedDomainEvent>()), Times.Once);
         }
@@ -76,7 +76,7 @@ internal sealed class CreateTaskCommandHandlerTests
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
                 await _sut.HandleAsync(null!, CancellationToken.None).ConfigureAwait(false));
 
-            _taskItemRepositoryMock.Verify(x => x.AddAsync(It.IsAny<TaskItem>()), Times.Never);
+            _taskItemRepositoryMock.Verify(x => x.Add(It.IsAny<TaskItem>()), Times.Never);
             _unitOfWorkMock.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
             _messageBusMock.Verify(x => x.PublishAsync(It.IsAny<TaskCreatedDomainEvent>()), Times.Never);
         }

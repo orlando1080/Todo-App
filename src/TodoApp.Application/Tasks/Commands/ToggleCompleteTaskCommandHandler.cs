@@ -25,7 +25,7 @@ public sealed class ToggleCompleteTaskCommandHandler
 
         taskItem.ToggleIsCompleted();
 
-        await _taskItemRepository.UpdateAsync(taskItem).ConfigureAwait(false);
+        await _taskItemRepository.Update(taskItem).ConfigureAwait(false);
 
         await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
     }

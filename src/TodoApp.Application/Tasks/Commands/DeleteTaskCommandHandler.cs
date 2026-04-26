@@ -14,6 +14,9 @@ public sealed class DeleteTaskCommandHandler
     public async Task HandleAsync(DeleteTaskCommand command, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(command);
-        await _taskItemRepository.DeleteAsync(command.Id).ConfigureAwait(false);
+
+        bool hasDeleted = await _taskItemRepository.DeleteAsync(command.Id).ConfigureAwait(false);
+
+        if (!hasDeleted) throw new InvalidOperationException($"TaskItem {command.Id} not found.");
     }
 }

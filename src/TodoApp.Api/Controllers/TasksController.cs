@@ -73,7 +73,14 @@ public sealed class TasksController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        await _deleteTaskCommandHandler.HandleAsync(new DeleteTaskCommand(id), cancellationToken).ConfigureAwait(false);
+        try
+        {
+            await _deleteTaskCommandHandler.HandleAsync(new DeleteTaskCommand(id), cancellationToken).ConfigureAwait(false);
+        }
+        catch (InvalidOperationException e)
+        {
+            return NotFound(e.Message);
+        }
 
         return NoContent();
     }

@@ -2,7 +2,7 @@
 
 namespace TodoApp.Api.Middleware;
 
-public sealed class ExceptionHandlingMiddleware
+internal sealed class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
 

@@ -24,20 +24,21 @@ public sealed class TaskItemRepository : ITaskItemRepository
             .SingleOrDefaultAsync(todoItem => todoItem.Id == id)
             .ConfigureAwait(false);
 
-    public async Task AddAsync(TaskItem item, CancellationToken cancellationToken) =>
-        await _context.TaskItems
-            .AddAsync(item, cancellationToken)
-            .ConfigureAwait(false);
+    public Task Add(TaskItem item, CancellationToken cancellationToken)
+    {
+        _context.TaskItems.Add(item);
+        return Task.CompletedTask;
+    }
 
-
-    public async Task DeleteAsync(Guid id) =>
+    public async Task<bool> DeleteAsync(Guid id) =>
         await _context.TaskItems
             .Where(todoItem => todoItem.Id == id)
             .ExecuteDeleteAsync()
-            .ConfigureAwait(false);
+            .ConfigureAwait(false) > 0;
 
-    public async Task UpdateAsync(TaskItem item)
+    public Task Update(TaskItem item)
     {
         _context.TaskItems.Update(item);
+        return Task.CompletedTask;
     }
 }
