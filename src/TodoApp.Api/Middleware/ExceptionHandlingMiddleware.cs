@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using ToDoApp.Application.Errors;
 
 namespace TodoApp.Api.Middleware;
 
@@ -19,6 +20,20 @@ internal sealed class ExceptionHandlingMiddleware
         try
         {
             await _next(context).ConfigureAwait(false);
+        }
+        catch (NotFoundException ex)
+        {
+            _logger.LogInformation(ex, ex.Message);
+
+            string json = JsonSerializer.Serialize(new
+            {
+                statusCode = 404,
+                message = ex.Message,
+            });
+
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = 404;
+            await context.Response.WriteAsync(json).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

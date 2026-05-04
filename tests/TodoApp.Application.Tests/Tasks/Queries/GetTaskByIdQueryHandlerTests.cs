@@ -1,5 +1,6 @@
 ﻿using Moq;
 using TodoApp.Application.Dtos;
+using ToDoApp.Application.Errors;
 using ToDoApp.Application.Tasks.Queries;
 using TodoApp.Domain.Entities;
 using TodoApp.Domain.Interfaces;
@@ -52,15 +53,13 @@ internal sealed class GetTaskByIdQueryHandlerTests
         Assert.ThrowsAsync<ArgumentNullException>(() => _sut.HandleAsync(null!, CancellationToken.None));
 
     [Test]
-    public async Task HandleAsync_TaskNotFound_ReturnsNull()
+    public void HandleAsync_TaskNotFound_ThrowsNotFoundException()
     {
         _taskItemRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((TaskItem?) null);
 
-        TaskItemDto? result = await _sut.HandleAsync(new GetTaskByIdQuery(Guid.NewGuid()), CancellationToken.None).ConfigureAwait(false);
-
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(result, Is.Null);
+            Assert.ThrowsAsync<NotFoundException>(() => _sut.HandleAsync(new GetTaskByIdQuery(Guid.NewGuid()), CancellationToken.None));
             _taskItemRepositoryMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
         }
     }

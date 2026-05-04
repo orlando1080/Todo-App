@@ -41,25 +41,18 @@ public sealed class TasksController : ControllerBase
     {
         TaskItemDto? taskItemDto = await _getTaskByIdQueryHandler.HandleAsync(new GetTaskByIdQuery(id), cancellationToken).ConfigureAwait(false);
 
-        return taskItemDto is not null ? Ok(taskItemDto) : NotFound();
+        return Ok(taskItemDto);
     }
 
     [HttpPost]
     [ProducesResponseType(typeof(TaskItemDto), StatusCodes.Status201Created)]
     public async Task<ActionResult<TaskItemDto>> Create([FromBody] string title, CancellationToken cancellationToken)
     {
-        try
-        {
-            CreateTaskCommand command = new(title);
+        CreateTaskCommand command = new(title);
 
-            TaskItemDto taskItemDto = await _createTaskCommandHandler.HandleAsync(command, cancellationToken).ConfigureAwait(false);
+        TaskItemDto taskItemDto = await _createTaskCommandHandler.HandleAsync(command, cancellationToken).ConfigureAwait(false);
 
-            return CreatedAtAction(nameof(Create), taskItemDto);
-        }
-        catch (ArgumentException e)
-        {
-            return BadRequest(e.Message);
-        }
+        return CreatedAtAction(nameof(Create), taskItemDto);
     }
 
     [HttpPatch("{id}")]
@@ -73,14 +66,7 @@ public sealed class TasksController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        try
-        {
-            await _deleteTaskCommandHandler.HandleAsync(new DeleteTaskCommand(id), cancellationToken).ConfigureAwait(false);
-        }
-        catch (InvalidOperationException e)
-        {
-            return NotFound(e.Message);
-        }
+        await _deleteTaskCommandHandler.HandleAsync(new DeleteTaskCommand(id), cancellationToken).ConfigureAwait(false);
 
         return NoContent();
     }

@@ -1,4 +1,5 @@
-﻿using ToDoApp.Application.Tasks.Interfaces;
+﻿using ToDoApp.Application.Errors;
+using ToDoApp.Application.Tasks.Interfaces;
 using TodoApp.Domain.Entities;
 using TodoApp.Domain.Interfaces;
 
@@ -21,7 +22,7 @@ public sealed class ToggleCompleteTaskCommandHandler
 
         TaskItem? taskItem = await _taskItemRepository.GetByIdAsync(command.Id).ConfigureAwait(false);
 
-        if (taskItem is null) throw new InvalidOperationException();
+        if (taskItem is null) throw new NotFoundException($"TaskItem {command.Id} not found.");
 
         taskItem.ToggleIsCompleted();
 

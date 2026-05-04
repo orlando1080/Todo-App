@@ -1,4 +1,5 @@
 ﻿using Moq;
+using ToDoApp.Application.Errors;
 using ToDoApp.Application.Tasks.Commands;
 using TodoApp.Domain.Interfaces;
 
@@ -40,12 +41,22 @@ internal sealed class DeleteTaskCommandHandlerTests
     }
 
     [Test]
-    public void HandleAsync_InvalidCommand_ThrowsArgumentNullException()
+    public void HandleAsync_InvalidCommand_ThrowsArgumentNullException() =>
+        Assert.ThrowsAsync<ArgumentNullException>(() => _sut.HandleAsync(null!, CancellationToken.None));
+
+    [Test]
+    public void HandleAsync_TaskItemNotFound_ThrowsNotFoundException()
     {
+        _taskItemRepositoryMock.Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(false);
+
         using (Assert.EnterMultipleScope())
         {
-            Assert.ThrowsAsync<ArgumentNullException>(() => _sut.HandleAsync(null!, CancellationToken.None));
-            _taskItemRepositoryMock.Verify(x => x.DeleteAsync(It.IsAny<Guid>()), Times.Never);
+
+            Assert.ThrowsAsync<NotFoundException>(() =>
+                _sut.HandleAsync(new DeleteTaskCommand(Guid.NewGuid()), CancellationToken.None));
+
+            _taskItemRepositoryMock.Verify(x => x.DeleteAsync(It.IsAny<Guid>()), Times.Once);
         }
     }
 }

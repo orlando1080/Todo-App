@@ -1,4 +1,5 @@
 ﻿using Moq;
+using ToDoApp.Application.Errors;
 using ToDoApp.Application.Tasks.Commands;
 using ToDoApp.Application.Tasks.Interfaces;
 using TodoApp.Domain.Entities;
@@ -63,7 +64,7 @@ internal sealed class ToggleCompleteTaskCommandHandlerTests
     }
 
     [Test]
-    public void HandleAsync_NullCommand_ThrowsArgumentNullException() =>
+    public void HandleAsync_NullCommand_ThrowsNotFoundException() =>
         Assert.ThrowsAsync<ArgumentNullException>(() => _sut.HandleAsync(null!, CancellationToken.None));
 
     [Test]
@@ -73,7 +74,7 @@ internal sealed class ToggleCompleteTaskCommandHandlerTests
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.ThrowsAsync<InvalidOperationException>(() => _sut.HandleAsync(new ToggleCompleteTaskCommand(_todoItemId), CancellationToken.None));
+            Assert.ThrowsAsync<NotFoundException>(() => _sut.HandleAsync(new ToggleCompleteTaskCommand(_todoItemId), CancellationToken.None));
             _taskItemRepositoryMock.Verify(x => x.GetByIdAsync(_todoItemId), Times.Once);
         }
     }

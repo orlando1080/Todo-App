@@ -1,4 +1,5 @@
-﻿using TodoApp.Domain.Interfaces;
+﻿using ToDoApp.Application.Errors;
+using TodoApp.Domain.Interfaces;
 
 namespace ToDoApp.Application.Tasks.Commands;
 
@@ -17,6 +18,6 @@ public sealed class DeleteTaskCommandHandler
 
         bool hasDeleted = await _taskItemRepository.DeleteAsync(command.Id).ConfigureAwait(false);
 
-        if (!hasDeleted) throw new InvalidOperationException($"TaskItem {command.Id} not found.");
+        if (!hasDeleted) throw new NotFoundException($"TaskItem {command.Id} not found.");
     }
 }

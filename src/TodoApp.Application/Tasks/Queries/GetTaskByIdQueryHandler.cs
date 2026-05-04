@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using TodoApp.Application.Dtos;
+using ToDoApp.Application.Errors;
 using TodoApp.Domain.Entities;
 using TodoApp.Domain.Interfaces;
 
@@ -20,6 +21,6 @@ public sealed class GetTaskByIdQueryHandler
 
         TaskItem? taskItem = await _taskItemRepository.GetByIdAsync(query.Id).ConfigureAwait(false);
 
-        return taskItem?.Adapt<TaskItemDto>();
+        return taskItem is null ? throw new NotFoundException($"TaskItem {query.Id} not found.") : taskItem.Adapt<TaskItemDto>();
     }
 }
